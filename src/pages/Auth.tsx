@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Sparkles, Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
 import { z } from "zod";
+import dicabsLogo from "@/assets/dicabs-logo.png";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -126,14 +127,8 @@ export default function Auth() {
 
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20 text-white">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-2xl shadow-primary/40">
-              <Sparkles className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Sharvi</h1>
-              <p className="text-sm text-white/60 font-medium tracking-wider uppercase">ProcureOne</p>
-            </div>
+          <div className="mb-8">
+            <img src={dicabsLogo} alt="DICABS Logo" className="h-16 object-contain" />
           </div>
 
           <h2 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
@@ -175,14 +170,8 @@ export default function Auth() {
       <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-background">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
-          <div className="flex items-center gap-3 mb-8 lg:hidden">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/30">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold tracking-tight">Sharvi</h1>
-              <p className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">ProcureOne</p>
-            </div>
+          <div className="mb-8 lg:hidden">
+            <img src={dicabsLogo} alt="DICABS Logo" className="h-12 object-contain" />
           </div>
 
           <Card className="border-border/40 shadow-2xl shadow-primary/5">

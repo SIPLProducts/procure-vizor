@@ -11,7 +11,6 @@ import {
   Truck,
   DoorOpen,
   Wallet,
-  Sparkles,
 } from "lucide-react";
 import {
   Tooltip,
@@ -19,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import dicabsLogo from "@/assets/dicabs-logo.png";
 
 const navItems = [
   { name: "Dashboard", path: "/", icon: LayoutDashboard },
@@ -58,15 +58,14 @@ export function Sidebar({ collapsed }: SidebarProps) {
         "h-16 flex items-center border-b border-sidebar-border/50 relative",
         collapsed ? "px-4 justify-center" : "px-5"
       )}>
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/30">
-          <Sparkles className="w-5 h-5 text-white" />
-        </div>
-        {!collapsed && (
-          <div className="ml-3 overflow-hidden">
-            <h1 className="text-lg font-bold text-sidebar-foreground tracking-tight">Sharvi</h1>
-            <p className="text-[11px] text-sidebar-muted font-medium -mt-0.5 tracking-wide uppercase">ProcureOne</p>
-          </div>
-        )}
+        <img 
+          src={dicabsLogo} 
+          alt="DICABS Logo" 
+          className={cn(
+            "object-contain",
+            collapsed ? "h-8 w-8" : "h-10"
+          )}
+        />
       </div>
 
       {/* Navigation */}
