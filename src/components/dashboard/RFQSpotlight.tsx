@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, ArrowRight } from "lucide-react";
+import { Clock, ArrowRight, FileText } from "lucide-react";
 
 const rfqs = [
   { id: "RFQ-2024-001", title: "Steel Plates - Q1 Requirement", vendors: 5, dueIn: 2, status: "active" },
@@ -10,32 +10,42 @@ const rfqs = [
 
 export function RFQSpotlight() {
   return (
-    <div className="bg-card rounded-xl p-5 shadow-card">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-base font-semibold text-foreground">RFQ Spotlight</h3>
-        <Button variant="ghost" size="sm" className="text-primary">
+    <div className="bg-card rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-100">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500">
+            <FileText className="w-5 h-5 text-white" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-900">RFQ Spotlight</h3>
+        </div>
+        <Button variant="ghost" size="sm" className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 font-semibold">
           View All <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
       <div className="space-y-3">
-        {rfqs.map((rfq) => (
+        {rfqs.map((rfq, index) => (
           <div
             key={rfq.id}
-            className="p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer"
+            className="p-4 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 hover:border-slate-200 transition-all cursor-pointer group"
           >
             <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-foreground">{rfq.title}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{rfq.id}</p>
+              <div className="flex-1">
+                <p className="text-[15px] font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors">{rfq.title}</p>
+                <p className="text-sm text-slate-500 mt-0.5">{rfq.id}</p>
               </div>
-              <Badge variant={rfq.status === "urgent" ? "destructive" : "secondary"}>
+              <Badge 
+                className={rfq.status === "urgent" 
+                  ? "bg-red-100 text-red-700 border-red-200 hover:bg-red-100" 
+                  : "bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                }
+              >
                 {rfq.status === "urgent" ? "Urgent" : "Active"}
               </Badge>
             </div>
-            <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-              <span>{rfq.vendors} vendors invited</span>
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
+            <div className="flex items-center gap-4 mt-3 text-sm text-slate-500">
+              <span className="font-medium">{rfq.vendors} vendors invited</span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-4 h-4" />
                 Due in {rfq.dueIn} days
               </span>
             </div>
