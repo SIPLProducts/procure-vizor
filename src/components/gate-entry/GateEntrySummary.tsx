@@ -1,5 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Truck, Package, Users, LogIn, LogOut, Clock, AlertTriangle, CheckCircle } from "lucide-react";
+import { Truck, Package, Users, LogIn, LogOut, Clock, AlertTriangle, CheckCircle, LucideIcon } from "lucide-react";
 import { VehicleEntry, MaterialEntry, VisitorEntry } from "@/contexts/GateEntryContext";
 import { cn } from "@/lib/utils";
 
@@ -8,6 +7,33 @@ interface GateEntrySummaryProps {
   materials: MaterialEntry[];
   visitors: VisitorEntry[];
 }
+
+interface StatCardProps {
+  title: string;
+  value: number;
+  icon: LucideIcon;
+  gradient: string;
+  iconShadow: string;
+  titleColor: string;
+}
+
+const StatCard = ({ title, value, icon: Icon, gradient, iconShadow, titleColor }: StatCardProps) => (
+  <div className="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-lg border border-slate-100 transition-all duration-300">
+    <div className="flex flex-col items-center text-center gap-2">
+      <div className={cn(
+        "p-2.5 rounded-xl text-white shadow-lg transition-transform duration-300 group-hover:scale-105",
+        gradient,
+        iconShadow
+      )}>
+        <Icon className="w-5 h-5" />
+      </div>
+      <p className="text-2xl font-bold text-slate-800 tracking-tight">{value}</p>
+      <p className={cn("text-[10px] font-bold uppercase tracking-wider leading-tight", titleColor)}>
+        {title}
+      </p>
+    </div>
+  </div>
+);
 
 export const GateEntrySummary = ({ vehicles, materials, visitors }: GateEntrySummaryProps) => {
   const vehiclesIn = vehicles.filter((v) => v.status === "in").length;
@@ -23,94 +49,72 @@ export const GateEntrySummary = ({ vehicles, materials, visitors }: GateEntrySum
       title: "Vehicles Inside",
       value: vehiclesIn,
       icon: Truck,
-      color: "text-primary",
-      bgColor: "bg-primary/10",
-      gradient: "from-primary/10",
+      gradient: "bg-gradient-to-br from-emerald-400 to-teal-500",
+      iconShadow: "shadow-emerald-500/30",
+      titleColor: "text-emerald-600",
     },
     {
       title: "Vehicles Exited",
       value: vehiclesOut,
       icon: LogOut,
-      color: "text-muted-foreground",
-      bgColor: "bg-muted",
-      gradient: "from-muted/50",
+      gradient: "bg-gradient-to-br from-slate-400 to-slate-500",
+      iconShadow: "shadow-slate-500/30",
+      titleColor: "text-slate-600",
     },
     {
       title: "Material Inward",
       value: materialInward,
       icon: LogIn,
-      color: "text-success",
-      bgColor: "bg-success/10",
-      gradient: "from-success/10",
+      gradient: "bg-gradient-to-br from-green-400 to-emerald-500",
+      iconShadow: "shadow-green-500/30",
+      titleColor: "text-green-600",
     },
     {
       title: "Material Outward",
       value: materialOutward,
       icon: Package,
-      color: "text-warning",
-      bgColor: "bg-warning/10",
-      gradient: "from-warning/10",
+      gradient: "bg-gradient-to-br from-amber-400 to-orange-500",
+      iconShadow: "shadow-amber-500/30",
+      titleColor: "text-amber-600",
     },
     {
-      title: "Pending Verification",
+      title: "Pending Verify",
       value: pendingVerification,
       icon: Clock,
-      color: "text-warning",
-      bgColor: "bg-warning/10",
-      gradient: "from-warning/10",
+      gradient: "bg-gradient-to-br from-yellow-400 to-amber-500",
+      iconShadow: "shadow-yellow-500/30",
+      titleColor: "text-yellow-600",
     },
     {
       title: "Visitors Inside",
       value: visitorsIn,
       icon: Users,
-      color: "text-accent",
-      bgColor: "bg-accent/10",
-      gradient: "from-accent/10",
+      gradient: "bg-gradient-to-br from-purple-400 to-violet-500",
+      iconShadow: "shadow-purple-500/30",
+      titleColor: "text-purple-600",
     },
     {
       title: "Expected Visitors",
       value: visitorsExpected,
       icon: AlertTriangle,
-      color: "text-info",
-      bgColor: "bg-info/10",
-      gradient: "from-info/10",
+      gradient: "bg-gradient-to-br from-cyan-400 to-blue-500",
+      iconShadow: "shadow-cyan-500/30",
+      titleColor: "text-cyan-600",
     },
     {
       title: "Today's Entries",
       value: vehicles.length + visitors.length,
       icon: CheckCircle,
-      color: "text-success",
-      bgColor: "bg-success/10",
-      gradient: "from-success/10",
+      gradient: "bg-gradient-to-br from-blue-400 to-indigo-500",
+      iconShadow: "shadow-blue-500/30",
+      titleColor: "text-blue-600",
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 stagger-children">
-      {cards.map((card, index) => (
-        <Card 
-          key={card.title} 
-          className="group overflow-hidden hover:shadow-lg hover:border-border/80 transition-all duration-300"
-        >
-          <CardContent className="p-4 relative">
-            {/* Gradient overlay on hover */}
-            <div className={cn(
-              "absolute inset-0 bg-gradient-to-br to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300",
-              card.gradient
-            )} />
-            
-            <div className="relative flex flex-col items-center text-center gap-2">
-              <div className={cn(
-                "p-2.5 rounded-xl transition-transform duration-300 group-hover:scale-110",
-                card.bgColor
-              )}>
-                <card.icon className={cn("h-5 w-5", card.color)} />
-              </div>
-              <p className="text-2xl font-bold tracking-tight">{card.value}</p>
-              <p className="text-[11px] font-medium text-muted-foreground leading-tight">{card.title}</p>
-            </div>
-          </CardContent>
-        </Card>
+    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+      {cards.map((card) => (
+        <StatCard key={card.title} {...card} />
       ))}
     </div>
   );

@@ -1,10 +1,39 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, AlertTriangle, Brain, Package, Target } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertTriangle, Brain, Package, Target, LucideIcon } from "lucide-react";
 import { ForecastItem } from "@/pages/PurchaseForecasting";
+import { cn } from "@/lib/utils";
 
 interface ForecastingSummaryCardsProps {
   items: ForecastItem[];
 }
+
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  icon: LucideIcon;
+  gradient: string;
+  iconShadow: string;
+  titleColor: string;
+}
+
+const StatCard = ({ title, value, icon: Icon, gradient, iconShadow, titleColor }: StatCardProps) => (
+  <div className="group bg-white rounded-2xl p-5 shadow-sm hover:shadow-lg border border-slate-100 transition-all duration-300">
+    <div className="flex items-start justify-between">
+      <div className="flex-1">
+        <p className={cn("text-xs font-bold uppercase tracking-wider", titleColor)}>
+          {title}
+        </p>
+        <p className="mt-2 text-2xl font-bold text-slate-800 tracking-tight">{value}</p>
+      </div>
+      <div className={cn(
+        "p-3 rounded-xl text-white shadow-lg transition-transform duration-300 group-hover:scale-105",
+        gradient,
+        iconShadow
+      )}>
+        <Icon className="w-5 h-5" />
+      </div>
+    </div>
+  </div>
+);
 
 export const ForecastingSummaryCards = ({ items }: ForecastingSummaryCardsProps) => {
   const itemsBelowReorder = items.filter(
@@ -28,62 +57,56 @@ export const ForecastingSummaryCards = ({ items }: ForecastingSummaryCardsProps)
       title: "Items Tracked",
       value: items.length,
       icon: Package,
-      color: "text-blue-500",
-      bgColor: "bg-blue-500/10",
+      gradient: "bg-gradient-to-br from-blue-400 to-cyan-500",
+      iconShadow: "shadow-blue-500/30",
+      titleColor: "text-blue-600",
     },
     {
-      title: "Below Reorder Point",
+      title: "Below Reorder",
       value: itemsBelowReorder,
       icon: AlertTriangle,
-      color: "text-amber-500",
-      bgColor: "bg-amber-500/10",
+      gradient: "bg-gradient-to-br from-amber-400 to-orange-500",
+      iconShadow: "shadow-amber-500/30",
+      titleColor: "text-amber-600",
     },
     {
-      title: "Forecast Confidence",
+      title: "Confidence",
       value: `${avgConfidence}%`,
       icon: Brain,
-      color: "text-purple-500",
-      bgColor: "bg-purple-500/10",
+      gradient: "bg-gradient-to-br from-purple-400 to-violet-500",
+      iconShadow: "shadow-purple-500/30",
+      titleColor: "text-purple-600",
     },
     {
-      title: "Next Month Demand",
+      title: "Next Month",
       value: totalForecastedDemand.toLocaleString(),
       icon: Target,
-      color: "text-emerald-500",
-      bgColor: "bg-emerald-500/10",
+      gradient: "bg-gradient-to-br from-emerald-400 to-teal-500",
+      iconShadow: "shadow-emerald-500/30",
+      titleColor: "text-emerald-600",
     },
     {
-      title: "Increasing Trends",
+      title: "Increasing",
       value: increasingTrend,
       icon: TrendingUp,
-      color: "text-green-500",
-      bgColor: "bg-green-500/10",
+      gradient: "bg-gradient-to-br from-green-400 to-emerald-500",
+      iconShadow: "shadow-green-500/30",
+      titleColor: "text-green-600",
     },
     {
-      title: "Decreasing Trends",
+      title: "Decreasing",
       value: decreasingTrend,
       icon: TrendingDown,
-      color: "text-red-500",
-      bgColor: "bg-red-500/10",
+      gradient: "bg-gradient-to-br from-red-400 to-rose-500",
+      iconShadow: "shadow-red-500/30",
+      titleColor: "text-red-600",
     },
   ];
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
       {cards.map((card) => (
-        <Card key={card.title}>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${card.bgColor}`}>
-                <card.icon className={`h-5 w-5 ${card.color}`} />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{card.value}</p>
-                <p className="text-xs text-muted-foreground">{card.title}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <StatCard key={card.title} {...card} />
       ))}
     </div>
   );
