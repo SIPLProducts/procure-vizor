@@ -17,9 +17,11 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Users, Search, Plus, Eye, LogIn, LogOut, Phone, Laptop, Car } from "lucide-react";
+import { Users, Search, Plus, Eye, LogIn, LogOut, Phone, Laptop, Car, Camera, ShieldCheck, ShieldAlert } from "lucide-react";
 import { useGateEntry, VisitorEntry } from "@/contexts/GateEntryContext";
 import { PrintGatePass } from "./PrintGatePass";
+import { CameraCapture } from "./CameraCapture";
+import { FaceVerification } from "./FaceVerification";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -28,6 +30,7 @@ export const VisitorManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isNewVisitorOpen, setIsNewVisitorOpen] = useState(false);
+  const [verifyingVisitor, setVerifyingVisitor] = useState<VisitorEntry | null>(null);
   const [newVisitor, setNewVisitor] = useState({
     name: "",
     phone: "",
@@ -41,6 +44,7 @@ export const VisitorManagement = () => {
     vehicleNumber: "",
     laptop: false,
     laptopSerial: "",
+    photo: "",
   });
 
   const filteredVisitors = visitors.filter((visitor) => {
@@ -68,13 +72,25 @@ export const VisitorManagement = () => {
   };
 
   const handleCheckIn = (visitor: VisitorEntry) => {
-    const badgeNumber = `VB-${Math.floor(Math.random() * 100) + 1}`;
-    updateVisitor(visitor.id, { 
-      status: "checked_in", 
-      entryTime: new Date(),
-      badge: badgeNumber 
-    });
-    toast.success(`${visitor.name} checked in successfully. Badge: ${badgeNumber}`);
+    // Open face verification dialog
+    setVerifyingVisitor(visitor);
+  };
+
+  const handleFaceVerified = (imageData: string, verified: boolean) => {
+    if (verifyingVisitor) {
+      const badgeNumber = `VB-${Math.floor(Math.random() * 100) + 1}`;
+      updateVisitor(verifyingVisitor.id, { 
+        status: "checked_in", 
+        entryTime: new Date(),
+        badge: badgeNumber,
+        photo: verifyingVisitor.photo || imageData, // Keep original or use new
+        verifiedAtCheckIn: verified,
+      });
+      toast.success(
+        `${verifyingVisitor.name} checked in successfully. Badge: ${badgeNumber}${verified ? " (Face verified)" : " (Manual override)"}`
+      );
+      setVerifyingVisitor(null);
+    }
   };
 
   const handleCheckOut = (visitor: VisitorEntry) => {
@@ -87,6 +103,10 @@ export const VisitorManagement = () => {
       toast.error("Please fill in all required fields");
       return;
     }
+    if (!newVisitor.photo) {
+      toast.error("Please capture visitor photo for security");
+      return;
+    }
     addVisitor({
       name: newVisitor.name,
       phone: newVisitor.phone,
@@ -94,6 +114,7 @@ export const VisitorManagement = () => {
       company: newVisitor.company || undefined,
       idType: newVisitor.idType,
       idNumber: newVisitor.idNumber,
+      photo: newVisitor.photo,
       purpose: newVisitor.purpose,
       hostName: newVisitor.hostName,
       hostDepartment: newVisitor.hostDepartment,
@@ -118,6 +139,7 @@ export const VisitorManagement = () => {
       vehicleNumber: "",
       laptop: false,
       laptopSerial: "",
+      photo: "",
     });
   };
 
@@ -289,6 +311,26 @@ export const VisitorManagement = () => {
                       />
                     </div>
                   )}
+                  <div className="space-y-2 col-span-2">
+                    <Label>Visitor Photo * (for face verification)</Label>
+                    <div className="flex items-center gap-4">
+                      <CameraCapture
+                        label="Photo"
+                        currentImage={newVisitor.photo}
+                        onCapture={(imageData) => setNewVisitor({ ...newVisitor, photo: imageData })}
+                      />
+                      <div className="text-sm text-muted-foreground">
+                        {newVisitor.photo ? (
+                          <span className="text-green-600 flex items-center gap-1">
+                            <ShieldCheck className="h-4 w-4" />
+                            Photo captured for security verification
+                          </span>
+                        ) : (
+                          "Capture visitor photo for security verification at check-in"
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsNewVisitorOpen(false)}>Cancel</Button>
@@ -304,13 +346,14 @@ export const VisitorManagement = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Photo</TableHead>
                 <TableHead>Visitor</TableHead>
                 <TableHead>Company</TableHead>
                 <TableHead>Purpose</TableHead>
                 <TableHead>Host</TableHead>
                 <TableHead>Entry Time</TableHead>
                 <TableHead>Badge</TableHead>
-                <TableHead>Assets</TableHead>
+                <TableHead>Verified</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -318,6 +361,19 @@ export const VisitorManagement = () => {
             <TableBody>
               {filteredVisitors.map((visitor) => (
                 <TableRow key={visitor.id}>
+                  <TableCell>
+                    {visitor.photo ? (
+                      <img
+                        src={visitor.photo}
+                        alt={visitor.name}
+                        className="w-10 h-10 object-cover rounded-full border"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                        <Camera className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <div>
                       <p className="font-medium">{visitor.name}</p>
@@ -359,20 +415,21 @@ export const VisitorManagement = () => {
                     )}
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
-                      {visitor.laptop && (
-                        <Badge variant="outline" className="text-xs">
-                          <Laptop className="h-3 w-3 mr-1" />
-                          Laptop
+                    {visitor.status === "checked_in" || visitor.status === "checked_out" ? (
+                      visitor.verifiedAtCheckIn ? (
+                        <Badge className="bg-green-500/10 text-green-500 border-green-500/20">
+                          <ShieldCheck className="h-3 w-3 mr-1" />
+                          Verified
                         </Badge>
-                      )}
-                      {visitor.vehicleNumber && (
-                        <Badge variant="outline" className="text-xs">
-                          <Car className="h-3 w-3 mr-1" />
-                          Vehicle
+                      ) : (
+                        <Badge className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
+                          <ShieldAlert className="h-3 w-3 mr-1" />
+                          Manual
                         </Badge>
-                      )}
-                    </div>
+                      )
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
                   </TableCell>
                   <TableCell>{getStatusBadge(visitor.status)}</TableCell>
                   <TableCell className="text-right">
@@ -390,6 +447,30 @@ export const VisitorManagement = () => {
                             <DialogDescription>{visitor.name}</DialogDescription>
                           </DialogHeader>
                           <div className="space-y-4">
+                            {visitor.photo && (
+                              <div className="flex items-center gap-4 p-3 bg-muted rounded-lg">
+                                <img
+                                  src={visitor.photo}
+                                  alt={visitor.name}
+                                  className="w-20 h-20 object-cover rounded-lg border"
+                                />
+                                <div>
+                                  <p className="font-medium">{visitor.name}</p>
+                                  {visitor.verifiedAtCheckIn !== undefined && (
+                                    <Badge className={visitor.verifiedAtCheckIn 
+                                      ? "bg-green-500/10 text-green-500 border-green-500/20 mt-1" 
+                                      : "bg-yellow-500/10 text-yellow-500 border-yellow-500/20 mt-1"
+                                    }>
+                                      {visitor.verifiedAtCheckIn ? (
+                                        <><ShieldCheck className="h-3 w-3 mr-1" /> Face Verified</>
+                                      ) : (
+                                        <><ShieldAlert className="h-3 w-3 mr-1" /> Manual Override</>
+                                      )}
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            )}
                             <div className="grid grid-cols-2 gap-4">
                               <div>
                                 <Label className="text-muted-foreground">Phone</Label>
@@ -453,6 +534,17 @@ export const VisitorManagement = () => {
           </Table>
         </div>
       </CardContent>
+      
+      {/* Face Verification Dialog */}
+      {verifyingVisitor && (
+        <FaceVerification
+          isOpen={!!verifyingVisitor}
+          onClose={() => setVerifyingVisitor(null)}
+          visitorName={verifyingVisitor.name}
+          referencePhoto={verifyingVisitor.photo}
+          onVerified={handleFaceVerified}
+        />
+      )}
     </Card>
   );
 };
