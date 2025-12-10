@@ -126,24 +126,34 @@ export function InviteVendor() {
             Required Documents
           </Label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {documentTypes.map((doc) => (
-              <div
-                key={doc.id}
-                onClick={() => toggleDocument(doc.id)}
-                className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${
-                  selectedDocs.includes(doc.id)
-                    ? "border-indigo-500 bg-indigo-50"
-                    : "border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                <Checkbox
-                  checked={selectedDocs.includes(doc.id)}
-                  onCheckedChange={() => toggleDocument(doc.id)}
-                  className="pointer-events-none"
-                />
-                <span className="text-sm font-medium text-slate-700">{doc.label}</span>
-              </div>
-            ))}
+            {documentTypes.map((doc) => {
+              const isSelected = selectedDocs.includes(doc.id);
+              return (
+                <button
+                  type="button"
+                  key={doc.id}
+                  onClick={() => toggleDocument(doc.id)}
+                  className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all text-left ${
+                    isSelected
+                      ? "border-indigo-500 bg-indigo-50"
+                      : "border-slate-200 hover:border-slate-300"
+                  }`}
+                >
+                  <div
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                      isSelected
+                        ? "bg-indigo-500 border-indigo-500"
+                        : "border-slate-300"
+                    }`}
+                  >
+                    {isSelected && (
+                      <CheckSquare className="w-3 h-3 text-white" />
+                    )}
+                  </div>
+                  <span className="text-sm font-medium text-slate-700">{doc.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
