@@ -12,8 +12,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Package, Search, Plus, Eye, CheckCircle, XCircle, ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { MaterialEntry } from "@/pages/GateEntry";
 import { format } from "date-fns";
@@ -24,6 +26,20 @@ interface MaterialTrackingProps {
 }
 
 export const MaterialTracking = ({ materials }: MaterialTrackingProps) => {
+  const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
+  const [newMaterial, setNewMaterial] = useState({
+    type: "inward" as "inward" | "outward",
+    vehicleNumber: "",
+    materialDescription: "",
+    quantity: "",
+    unit: "kg",
+    poNumber: "",
+    invoiceNumber: "",
+    vendor: "",
+    department: "",
+    receivedBy: "",
+    remarks: "",
+  });
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -58,6 +74,28 @@ export const MaterialTracking = ({ materials }: MaterialTrackingProps) => {
 
   const handleReject = (material: MaterialEntry) => {
     toast.error(`Material ${material.id} rejected`);
+  };
+
+  const handleCreateEntry = () => {
+    if (!newMaterial.vehicleNumber || !newMaterial.materialDescription || !newMaterial.quantity || !newMaterial.department) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    toast.success(`Material entry created successfully`);
+    setIsNewEntryOpen(false);
+    setNewMaterial({
+      type: "inward",
+      vehicleNumber: "",
+      materialDescription: "",
+      quantity: "",
+      unit: "kg",
+      poNumber: "",
+      invoiceNumber: "",
+      vendor: "",
+      department: "",
+      receivedBy: "",
+      remarks: "",
+    });
   };
 
   return (
@@ -102,10 +140,142 @@ export const MaterialTracking = ({ materials }: MaterialTrackingProps) => {
                 <SelectItem value="rejected">Rejected</SelectItem>
               </SelectContent>
             </Select>
-            <Button>
-              <Plus className="h-4 w-4 mr-1" />
-              New Entry
-            </Button>
+            <Dialog open={isNewEntryOpen} onOpenChange={setIsNewEntryOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-1" />
+                  New Entry
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>New Material Entry</DialogTitle>
+                  <DialogDescription>Record material inward or outward</DialogDescription>
+                </DialogHeader>
+                <div className="grid grid-cols-2 gap-4 py-4">
+                  <div className="space-y-2">
+                    <Label>Entry Type *</Label>
+                    <Select
+                      value={newMaterial.type}
+                      onValueChange={(v) => setNewMaterial({ ...newMaterial, type: v as any })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="inward">Inward</SelectItem>
+                        <SelectItem value="outward">Outward</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Vehicle Number *</Label>
+                    <Input
+                      placeholder="MH12AB1234"
+                      value={newMaterial.vehicleNumber}
+                      onChange={(e) => setNewMaterial({ ...newMaterial, vehicleNumber: e.target.value.toUpperCase() })}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Material Description *</Label>
+                    <Input
+                      placeholder="Enter material description"
+                      value={newMaterial.materialDescription}
+                      onChange={(e) => setNewMaterial({ ...newMaterial, materialDescription: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Quantity *</Label>
+                    <Input
+                      type="number"
+                      placeholder="100"
+                      value={newMaterial.quantity}
+                      onChange={(e) => setNewMaterial({ ...newMaterial, quantity: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Unit</Label>
+                    <Select
+                      value={newMaterial.unit}
+                      onValueChange={(v) => setNewMaterial({ ...newMaterial, unit: v })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="kg">Kg</SelectItem>
+                        <SelectItem value="units">Units</SelectItem>
+                        <SelectItem value="liters">Liters</SelectItem>
+                        <SelectItem value="meters">Meters</SelectItem>
+                        <SelectItem value="boxes">Boxes</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>PO Number</Label>
+                    <Input
+                      placeholder="PO-2024-0001"
+                      value={newMaterial.poNumber}
+                      onChange={(e) => setNewMaterial({ ...newMaterial, poNumber: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Invoice Number</Label>
+                    <Input
+                      placeholder="INV-2024-0001"
+                      value={newMaterial.invoiceNumber}
+                      onChange={(e) => setNewMaterial({ ...newMaterial, invoiceNumber: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Vendor</Label>
+                    <Input
+                      placeholder="Vendor name"
+                      value={newMaterial.vendor}
+                      onChange={(e) => setNewMaterial({ ...newMaterial, vendor: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Department *</Label>
+                    <Select
+                      value={newMaterial.department}
+                      onValueChange={(v) => setNewMaterial({ ...newMaterial, department: v })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select department" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Production">Production</SelectItem>
+                        <SelectItem value="Stores">Stores</SelectItem>
+                        <SelectItem value="Dispatch">Dispatch</SelectItem>
+                        <SelectItem value="Maintenance">Maintenance</SelectItem>
+                        <SelectItem value="Quality">Quality</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{newMaterial.type === "inward" ? "Received By" : "Dispatched By"}</Label>
+                    <Input
+                      placeholder="Enter name"
+                      value={newMaterial.receivedBy}
+                      onChange={(e) => setNewMaterial({ ...newMaterial, receivedBy: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Remarks</Label>
+                    <Textarea
+                      placeholder="Any additional notes..."
+                      value={newMaterial.remarks}
+                      onChange={(e) => setNewMaterial({ ...newMaterial, remarks: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsNewEntryOpen(false)}>Cancel</Button>
+                  <Button onClick={handleCreateEntry}>Create Entry</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </CardHeader>

@@ -12,8 +12,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Truck, Search, Plus, Eye, LogOut, Phone } from "lucide-react";
 import { VehicleEntry } from "@/pages/GateEntry";
 import { format } from "date-fns";
@@ -26,6 +28,19 @@ interface VehicleRegistryProps {
 export const VehicleRegistry = ({ vehicles }: VehicleRegistryProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
+  const [newVehicle, setNewVehicle] = useState({
+    vehicleNumber: "",
+    vehicleType: "truck" as const,
+    driverName: "",
+    driverPhone: "",
+    driverLicense: "",
+    purpose: "delivery" as const,
+    vendor: "",
+    poNumber: "",
+    gateNumber: "Gate 1",
+    remarks: "",
+  });
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleEntry | null>(null);
 
   const filteredVehicles = vehicles.filter((vehicle) => {
@@ -67,6 +82,27 @@ export const VehicleRegistry = ({ vehicles }: VehicleRegistryProps) => {
     toast.success(`Vehicle ${vehicle.vehicleNumber} checked out successfully`);
   };
 
+  const handleCreateEntry = () => {
+    if (!newVehicle.vehicleNumber || !newVehicle.driverName || !newVehicle.driverPhone) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    toast.success(`Vehicle ${newVehicle.vehicleNumber} registered successfully`);
+    setIsNewEntryOpen(false);
+    setNewVehicle({
+      vehicleNumber: "",
+      vehicleType: "truck",
+      driverName: "",
+      driverPhone: "",
+      driverLicense: "",
+      purpose: "delivery",
+      vendor: "",
+      poNumber: "",
+      gateNumber: "Gate 1",
+      remarks: "",
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -98,10 +134,141 @@ export const VehicleRegistry = ({ vehicles }: VehicleRegistryProps) => {
                 <SelectItem value="out">Exited</SelectItem>
               </SelectContent>
             </Select>
-            <Button>
-              <Plus className="h-4 w-4 mr-1" />
-              New Entry
-            </Button>
+            <Dialog open={isNewEntryOpen} onOpenChange={setIsNewEntryOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-1" />
+                  New Entry
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Register New Vehicle</DialogTitle>
+                  <DialogDescription>Enter vehicle and driver details</DialogDescription>
+                </DialogHeader>
+                <div className="grid grid-cols-2 gap-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="vehicleNumber">Vehicle Number *</Label>
+                    <Input
+                      id="vehicleNumber"
+                      placeholder="MH12AB1234"
+                      value={newVehicle.vehicleNumber}
+                      onChange={(e) => setNewVehicle({ ...newVehicle, vehicleNumber: e.target.value.toUpperCase() })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="vehicleType">Vehicle Type</Label>
+                    <Select
+                      value={newVehicle.vehicleType}
+                      onValueChange={(v) => setNewVehicle({ ...newVehicle, vehicleType: v as any })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="truck">Truck</SelectItem>
+                        <SelectItem value="van">Van</SelectItem>
+                        <SelectItem value="car">Car</SelectItem>
+                        <SelectItem value="bike">Bike</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="driverName">Driver Name *</Label>
+                    <Input
+                      id="driverName"
+                      placeholder="Enter driver name"
+                      value={newVehicle.driverName}
+                      onChange={(e) => setNewVehicle({ ...newVehicle, driverName: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="driverPhone">Driver Phone *</Label>
+                    <Input
+                      id="driverPhone"
+                      placeholder="9876543210"
+                      value={newVehicle.driverPhone}
+                      onChange={(e) => setNewVehicle({ ...newVehicle, driverPhone: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="driverLicense">License Number</Label>
+                    <Input
+                      id="driverLicense"
+                      placeholder="MH1220200012345"
+                      value={newVehicle.driverLicense}
+                      onChange={(e) => setNewVehicle({ ...newVehicle, driverLicense: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="purpose">Purpose</Label>
+                    <Select
+                      value={newVehicle.purpose}
+                      onValueChange={(v) => setNewVehicle({ ...newVehicle, purpose: v as any })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="delivery">Delivery</SelectItem>
+                        <SelectItem value="pickup">Pickup</SelectItem>
+                        <SelectItem value="service">Service</SelectItem>
+                        <SelectItem value="visitor">Visitor</SelectItem>
+                        <SelectItem value="employee">Employee</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="vendor">Vendor/Company</Label>
+                    <Input
+                      id="vendor"
+                      placeholder="Enter vendor name"
+                      value={newVehicle.vendor}
+                      onChange={(e) => setNewVehicle({ ...newVehicle, vendor: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="poNumber">PO/Reference Number</Label>
+                    <Input
+                      id="poNumber"
+                      placeholder="PO-2024-0001"
+                      value={newVehicle.poNumber}
+                      onChange={(e) => setNewVehicle({ ...newVehicle, poNumber: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="gateNumber">Entry Gate</Label>
+                    <Select
+                      value={newVehicle.gateNumber}
+                      onValueChange={(v) => setNewVehicle({ ...newVehicle, gateNumber: v })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Gate 1">Gate 1</SelectItem>
+                        <SelectItem value="Gate 2">Gate 2</SelectItem>
+                        <SelectItem value="Gate 3">Gate 3</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label htmlFor="remarks">Remarks</Label>
+                    <Textarea
+                      id="remarks"
+                      placeholder="Any additional notes..."
+                      value={newVehicle.remarks}
+                      onChange={(e) => setNewVehicle({ ...newVehicle, remarks: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsNewEntryOpen(false)}>Cancel</Button>
+                  <Button onClick={handleCreateEntry}>Register Vehicle</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </CardHeader>

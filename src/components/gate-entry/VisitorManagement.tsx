@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
@@ -12,9 +13,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Users, Search, Plus, Eye, LogIn, LogOut, Phone, Mail, Laptop, Car } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Users, Search, Plus, Eye, LogIn, LogOut, Phone, Laptop, Car } from "lucide-react";
 import { VisitorEntry } from "@/pages/GateEntry";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -26,6 +29,21 @@ interface VisitorManagementProps {
 export const VisitorManagement = ({ visitors }: VisitorManagementProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [isNewVisitorOpen, setIsNewVisitorOpen] = useState(false);
+  const [newVisitor, setNewVisitor] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    company: "",
+    idType: "aadhar" as const,
+    idNumber: "",
+    purpose: "",
+    hostName: "",
+    hostDepartment: "",
+    vehicleNumber: "",
+    laptop: false,
+    laptopSerial: "",
+  });
 
   const filteredVisitors = visitors.filter((visitor) => {
     const matchesSearch =
@@ -57,6 +75,29 @@ export const VisitorManagement = ({ visitors }: VisitorManagementProps) => {
 
   const handleCheckOut = (visitor: VisitorEntry) => {
     toast.success(`${visitor.name} checked out successfully`);
+  };
+
+  const handlePreRegister = () => {
+    if (!newVisitor.name || !newVisitor.phone || !newVisitor.idNumber || !newVisitor.purpose || !newVisitor.hostName || !newVisitor.hostDepartment) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    toast.success(`Visitor ${newVisitor.name} pre-registered successfully`);
+    setIsNewVisitorOpen(false);
+    setNewVisitor({
+      name: "",
+      phone: "",
+      email: "",
+      company: "",
+      idType: "aadhar",
+      idNumber: "",
+      purpose: "",
+      hostName: "",
+      hostDepartment: "",
+      vehicleNumber: "",
+      laptop: false,
+      laptopSerial: "",
+    });
   };
 
   return (
@@ -91,10 +132,149 @@ export const VisitorManagement = ({ visitors }: VisitorManagementProps) => {
                 <SelectItem value="expected">Expected</SelectItem>
               </SelectContent>
             </Select>
-            <Button>
-              <Plus className="h-4 w-4 mr-1" />
-              Pre-Register
-            </Button>
+            <Dialog open={isNewVisitorOpen} onOpenChange={setIsNewVisitorOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-1" />
+                  Pre-Register
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Pre-Register Visitor</DialogTitle>
+                  <DialogDescription>Enter visitor details for pre-registration</DialogDescription>
+                </DialogHeader>
+                <div className="grid grid-cols-2 gap-4 py-4">
+                  <div className="space-y-2">
+                    <Label>Full Name *</Label>
+                    <Input
+                      placeholder="Enter visitor name"
+                      value={newVisitor.name}
+                      onChange={(e) => setNewVisitor({ ...newVisitor, name: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Phone Number *</Label>
+                    <Input
+                      placeholder="9876543210"
+                      value={newVisitor.phone}
+                      onChange={(e) => setNewVisitor({ ...newVisitor, phone: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Input
+                      type="email"
+                      placeholder="visitor@company.com"
+                      value={newVisitor.email}
+                      onChange={(e) => setNewVisitor({ ...newVisitor, email: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Company</Label>
+                    <Input
+                      placeholder="Company name"
+                      value={newVisitor.company}
+                      onChange={(e) => setNewVisitor({ ...newVisitor, company: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>ID Type *</Label>
+                    <Select
+                      value={newVisitor.idType}
+                      onValueChange={(v) => setNewVisitor({ ...newVisitor, idType: v as any })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="aadhar">Aadhar Card</SelectItem>
+                        <SelectItem value="pan">PAN Card</SelectItem>
+                        <SelectItem value="driving_license">Driving License</SelectItem>
+                        <SelectItem value="passport">Passport</SelectItem>
+                        <SelectItem value="employee_id">Employee ID</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>ID Number *</Label>
+                    <Input
+                      placeholder="Enter ID number"
+                      value={newVisitor.idNumber}
+                      onChange={(e) => setNewVisitor({ ...newVisitor, idNumber: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label>Purpose of Visit *</Label>
+                    <Textarea
+                      placeholder="Enter purpose of visit"
+                      value={newVisitor.purpose}
+                      onChange={(e) => setNewVisitor({ ...newVisitor, purpose: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Host Name *</Label>
+                    <Input
+                      placeholder="Enter host name"
+                      value={newVisitor.hostName}
+                      onChange={(e) => setNewVisitor({ ...newVisitor, hostName: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Host Department *</Label>
+                    <Select
+                      value={newVisitor.hostDepartment}
+                      onValueChange={(v) => setNewVisitor({ ...newVisitor, hostDepartment: v })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select department" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Sales">Sales</SelectItem>
+                        <SelectItem value="Finance">Finance</SelectItem>
+                        <SelectItem value="Procurement">Procurement</SelectItem>
+                        <SelectItem value="Production">Production</SelectItem>
+                        <SelectItem value="HR">HR</SelectItem>
+                        <SelectItem value="IT">IT</SelectItem>
+                        <SelectItem value="Admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Vehicle Number (if any)</Label>
+                    <Input
+                      placeholder="MH12AB1234"
+                      value={newVisitor.vehicleNumber}
+                      onChange={(e) => setNewVisitor({ ...newVisitor, vehicleNumber: e.target.value.toUpperCase() })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2 mt-6">
+                      <Checkbox
+                        id="laptop"
+                        checked={newVisitor.laptop}
+                        onCheckedChange={(checked) => setNewVisitor({ ...newVisitor, laptop: checked as boolean })}
+                      />
+                      <Label htmlFor="laptop" className="cursor-pointer">Carrying Laptop</Label>
+                    </div>
+                  </div>
+                  {newVisitor.laptop && (
+                    <div className="space-y-2 col-span-2">
+                      <Label>Laptop Serial Number</Label>
+                      <Input
+                        placeholder="Enter laptop serial number"
+                        value={newVisitor.laptopSerial}
+                        onChange={(e) => setNewVisitor({ ...newVisitor, laptopSerial: e.target.value })}
+                      />
+                    </div>
+                  )}
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsNewVisitorOpen(false)}>Cancel</Button>
+                  <Button onClick={handlePreRegister}>Pre-Register Visitor</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </CardHeader>
