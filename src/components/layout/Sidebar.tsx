@@ -77,10 +77,11 @@ export function Sidebar({ collapsed }: SidebarProps) {
       <nav className="flex-1 py-6 overflow-y-auto relative">
         <TooltipProvider delayDuration={0}>
           {!collapsed && (
-            <div className="px-6 mb-4">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-                Main Menu
+            <div className="px-6 mb-5">
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-600/80">
+                Navigation
               </span>
+              <div className="mt-2 h-0.5 w-8 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" />
             </div>
           )}
           <ul className={cn("space-y-1", collapsed ? "px-3" : "px-4")}>
