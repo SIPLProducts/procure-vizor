@@ -28,24 +28,24 @@ export default function Dashboard() {
     <MainLayout title="Executive Dashboard" subtitle="Real-time procurement insights">
       <div className="space-y-8 animate-fade-in">
         {/* Welcome Banner */}
-        <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-r ${currentScheme.gradient} p-8 text-white shadow-xl ${currentScheme.shadow} transition-all duration-500`}>
+        <div className={`relative overflow-hidden rounded-xl bg-gradient-to-r ${currentScheme.gradient} px-6 py-4 text-white shadow-lg ${currentScheme.shadow} transition-all duration-500`}>
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yIDItNCAyLTRzLTItMi00LTItNCAwLTQgMiAwIDIgMiA0IDIgNCA0IDIgNCAwIDQtMnoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30" />
-          <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-5 h-5" />
-              <span className="text-sm font-medium text-white/80 uppercase tracking-wider">Welcome back</span>
+          <div className="relative z-10 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Sparkles className="w-4 h-4" />
+                <span className="text-xs font-medium text-white/80 uppercase tracking-wider">Welcome back</span>
+              </div>
+              <h2 className="text-xl font-bold">Good {getGreeting()}, {userName}!</h2>
+              <p className="text-sm text-white/80">Your procurement operations are running smoothly.</p>
             </div>
-            <h2 className="text-3xl font-bold mb-2">Good {getGreeting()}, {userName}!</h2>
-            <p className="text-lg text-white/80 max-w-xl">
-              Your procurement operations are running smoothly. Here's what's happening today.
-            </p>
-          </div>
-          <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-20">
-            <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
-              <circle cx="100" cy="100" r="80" stroke="white" strokeWidth="2" />
-              <circle cx="100" cy="100" r="60" stroke="white" strokeWidth="2" />
-              <circle cx="100" cy="100" r="40" stroke="white" strokeWidth="2" />
-            </svg>
+            <div className="opacity-20 hidden sm:block">
+              <svg width="80" height="80" viewBox="0 0 200 200" fill="none">
+                <circle cx="100" cy="100" r="80" stroke="white" strokeWidth="2" />
+                <circle cx="100" cy="100" r="60" stroke="white" strokeWidth="2" />
+                <circle cx="100" cy="100" r="40" stroke="white" strokeWidth="2" />
+              </svg>
+            </div>
           </div>
         </div>
 
