@@ -43,60 +43,66 @@ export function Sidebar({ collapsed }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300 ease-in-out relative",
-        collapsed ? "w-[72px]" : "w-64"
+        "h-screen text-white flex flex-col transition-all duration-300 ease-in-out relative",
+        collapsed ? "w-[72px]" : "w-72"
       )}
       style={{
-        background: 'linear-gradient(180deg, hsl(226 50% 14%) 0%, hsl(226 50% 10%) 100%)'
+        background: 'linear-gradient(180deg, hsl(160 35% 12%) 0%, hsl(170 40% 8%) 50%, hsl(180 35% 6%) 100%)'
       }}
     >
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
+      {/* Subtle color accents */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-emerald-500/10 to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-teal-500/5 to-transparent" />
+      </div>
       
       {/* Logo */}
       <div className={cn(
-        "h-16 flex items-center border-b border-sidebar-border/50 relative",
-        collapsed ? "px-4 justify-center" : "px-5"
+        "py-5 flex items-center border-b border-white/10 relative",
+        collapsed ? "px-3 justify-center" : "px-5"
       )}>
-        <img 
-          src={dicabsLogo} 
-          alt="DICABS Logo" 
-          className={cn(
-            "object-contain",
-            collapsed ? "h-8 w-8" : "h-10"
-          )}
-        />
+        <div className={cn(
+          "bg-white rounded-xl shadow-lg transition-all duration-300",
+          collapsed ? "p-2" : "px-4 py-3"
+        )}>
+          <img 
+            src={dicabsLogo} 
+            alt="DICABS Logo" 
+            className={cn(
+              "object-contain",
+              collapsed ? "h-8 w-8" : "h-10"
+            )}
+          />
+        </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-4 overflow-y-auto relative">
+      <nav className="flex-1 py-5 overflow-y-auto relative">
         <TooltipProvider delayDuration={0}>
-          <ul className={cn("space-y-1", collapsed ? "px-2" : "px-3")}>
+          <ul className={cn("space-y-1.5", collapsed ? "px-2" : "px-4")}>
             {navItems.map((item, index) => {
               const isActive = location.pathname === item.path;
               const navLink = (
                 <NavLink
                   to={item.path}
                   className={cn(
-                    "group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative overflow-hidden",
-                    collapsed && "justify-center px-2",
+                    "group flex items-center gap-3.5 px-4 py-3 rounded-xl text-[15px] font-medium transition-all duration-200 relative overflow-hidden",
+                    collapsed && "justify-center px-3",
                     isActive
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-primary/30"
-                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                      ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30"
+                      : "text-white/75 hover:bg-white/10 hover:text-white"
                   )}
                 >
-                  {isActive && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-100" />
-                  )}
                   <item.icon className={cn(
-                    "w-5 h-5 flex-shrink-0 relative z-10 transition-transform duration-200",
+                    "flex-shrink-0 relative z-10 transition-transform duration-200",
+                    collapsed ? "w-5 h-5" : "w-[22px] h-[22px]",
                     !isActive && "group-hover:scale-110"
                   )} />
-                  {!collapsed && <span className="relative z-10">{item.name}</span>}
+                  {!collapsed && <span className="relative z-10 tracking-wide">{item.name}</span>}
                   
                   {/* Hover indicator */}
                   {!isActive && !collapsed && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-primary rounded-r-full transition-all duration-200 group-hover:h-6" />
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-gradient-to-b from-emerald-400 to-teal-400 rounded-r-full transition-all duration-200 group-hover:h-8" />
                   )}
                 </NavLink>
               );
@@ -108,7 +114,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
                       <TooltipTrigger asChild>
                         {navLink}
                       </TooltipTrigger>
-                      <TooltipContent side="right" className="font-medium">
+                      <TooltipContent side="right" className="font-medium text-sm">
                         {item.name}
                       </TooltipContent>
                     </Tooltip>
@@ -121,6 +127,9 @@ export function Sidebar({ collapsed }: SidebarProps) {
           </ul>
         </TooltipProvider>
       </nav>
+
+      {/* Bottom accent line */}
+      <div className="h-1 bg-gradient-to-r from-emerald-500 via-yellow-400 to-red-500" />
     </aside>
   );
 }
