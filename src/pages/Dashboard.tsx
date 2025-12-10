@@ -2,6 +2,9 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { SpendByCategoryChart } from "@/components/dashboard/SpendByCategoryChart";
 import { VendorPerformanceChart } from "@/components/dashboard/VendorPerformanceChart";
+import { YearOnYearChart } from "@/components/dashboard/YearOnYearChart";
+import { MonthOnMonthChart } from "@/components/dashboard/MonthOnMonthChart";
+import { YearComparisonChart } from "@/components/dashboard/YearComparisonChart";
 import { RFQSpotlight } from "@/components/dashboard/RFQSpotlight";
 import { ShipmentSummary } from "@/components/dashboard/ShipmentSummary";
 import { StockAlerts } from "@/components/dashboard/StockAlerts";
@@ -120,6 +123,21 @@ export default function Dashboard() {
               icon={AlertCircle}
               variant="warning"
             />
+          </div>
+        </div>
+
+        {/* Year on Year Comparison */}
+        <div>
+          <h3 className="text-lg font-semibold text-foreground mb-4">Yearly Comparison</h3>
+          <YearOnYearChart />
+        </div>
+
+        {/* Month on Month & Year Comparison */}
+        <div>
+          <h3 className="text-lg font-semibold text-foreground mb-4">Trends & Comparisons</h3>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <MonthOnMonthChart />
+            <YearComparisonChart />
           </div>
         </div>
 
