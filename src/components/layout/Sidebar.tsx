@@ -13,6 +13,12 @@ import {
   Wallet,
   Sparkles,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const navItems = [
   { name: "Dashboard", path: "/", icon: LayoutDashboard },
@@ -65,11 +71,11 @@ export function Sidebar({ collapsed }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 py-4 overflow-y-auto relative">
-        <ul className={cn("space-y-1", collapsed ? "px-2" : "px-3")}>
-          {navItems.map((item, index) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <li key={item.path} style={{ animationDelay: `${index * 30}ms` }} className="animate-fade-in">
+        <TooltipProvider delayDuration={0}>
+          <ul className={cn("space-y-1", collapsed ? "px-2" : "px-3")}>
+            {navItems.map((item, index) => {
+              const isActive = location.pathname === item.path;
+              const navLink = (
                 <NavLink
                   to={item.path}
                   className={cn(
@@ -94,10 +100,27 @@ export function Sidebar({ collapsed }: SidebarProps) {
                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-0 bg-primary rounded-r-full transition-all duration-200 group-hover:h-6" />
                   )}
                 </NavLink>
-              </li>
-            );
-          })}
-        </ul>
+              );
+
+              return (
+                <li key={item.path} style={{ animationDelay: `${index * 30}ms` }} className="animate-fade-in">
+                  {collapsed ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        {navLink}
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="font-medium">
+                        {item.name}
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    navLink
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </TooltipProvider>
       </nav>
     </aside>
   );
