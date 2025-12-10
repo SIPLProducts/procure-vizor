@@ -5,6 +5,7 @@ import { VendorPerformanceChart } from "@/components/dashboard/VendorPerformance
 import { YearOnYearChart } from "@/components/dashboard/YearOnYearChart";
 import { MonthOnMonthChart } from "@/components/dashboard/MonthOnMonthChart";
 import { YearComparisonChart } from "@/components/dashboard/YearComparisonChart";
+import { InventoryAgingChart } from "@/components/dashboard/InventoryAgingChart";
 import { RFQSpotlight } from "@/components/dashboard/RFQSpotlight";
 import { ShipmentSummary } from "@/components/dashboard/ShipmentSummary";
 import { StockAlerts } from "@/components/dashboard/StockAlerts";
@@ -145,9 +146,10 @@ export default function Dashboard() {
             {/* Charts Row */}
             <div>
               <h3 className="text-lg font-semibold text-foreground mb-4">Analytics</h3>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <SpendByCategoryChart />
                 <VendorPerformanceChart />
+                <InventoryAgingChart />
               </div>
             </div>
 
