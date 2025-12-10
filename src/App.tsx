@@ -10,6 +10,7 @@ import PurchaseOrders from "./pages/PurchaseOrders";
 import Inventory from "./pages/Inventory";
 import ShipmentTracking from "./pages/ShipmentTracking";
 import VendorFinance from "./pages/VendorFinance";
+import PurchaseForecasting from "./pages/PurchaseForecasting";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/shipments" element={<ShipmentTracking />} />
           <Route path="/vendor-finance" element={<VendorFinance />} />
+          <Route path="/forecasting" element={<PurchaseForecasting />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
