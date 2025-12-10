@@ -17,15 +17,12 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Package, Search, Plus, Eye, CheckCircle, XCircle, ArrowDownLeft, ArrowUpRight } from "lucide-react";
-import { MaterialEntry } from "@/pages/GateEntry";
+import { useGateEntry, MaterialEntry } from "@/contexts/GateEntryContext";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
-interface MaterialTrackingProps {
-  materials: MaterialEntry[];
-}
-
-export const MaterialTracking = ({ materials }: MaterialTrackingProps) => {
+export const MaterialTracking = () => {
+  const { materials, addMaterial, updateMaterial } = useGateEntry();
   const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
   const [newMaterial, setNewMaterial] = useState({
     type: "inward" as "inward" | "outward",
@@ -69,10 +66,12 @@ export const MaterialTracking = ({ materials }: MaterialTrackingProps) => {
   };
 
   const handleVerify = (material: MaterialEntry) => {
+    updateMaterial(material.id, { status: "verified", grnNumber: `GRN-${Date.now()}` });
     toast.success(`Material ${material.id} verified and GRN generated`);
   };
 
   const handleReject = (material: MaterialEntry) => {
+    updateMaterial(material.id, { status: "rejected" });
     toast.error(`Material ${material.id} rejected`);
   };
 
@@ -81,6 +80,23 @@ export const MaterialTracking = ({ materials }: MaterialTrackingProps) => {
       toast.error("Please fill in all required fields");
       return;
     }
+    addMaterial({
+      vehicleId: "",
+      vehicleNumber: newMaterial.vehicleNumber,
+      type: newMaterial.type,
+      materialDescription: newMaterial.materialDescription,
+      quantity: Number(newMaterial.quantity),
+      unit: newMaterial.unit,
+      poNumber: newMaterial.poNumber || undefined,
+      invoiceNumber: newMaterial.invoiceNumber || undefined,
+      vendor: newMaterial.vendor || undefined,
+      department: newMaterial.department,
+      receivedBy: newMaterial.type === "inward" ? newMaterial.receivedBy : undefined,
+      dispatchedBy: newMaterial.type === "outward" ? newMaterial.receivedBy : undefined,
+      timestamp: new Date(),
+      status: "pending",
+      remarks: newMaterial.remarks || undefined,
+    });
     toast.success(`Material entry created successfully`);
     setIsNewEntryOpen(false);
     setNewMaterial({
@@ -399,7 +415,8 @@ export const MaterialTracking = ({ materials }: MaterialTrackingProps) => {
                             className="text-green-500"
                             onClick={() => handleVerify(material)}
                           >
-                            <CheckCircle className="h-4 w-4" />
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Verify
                           </Button>
                           <Button
                             variant="outline"
@@ -407,7 +424,8 @@ export const MaterialTracking = ({ materials }: MaterialTrackingProps) => {
                             className="text-red-500"
                             onClick={() => handleReject(material)}
                           >
-                            <XCircle className="h-4 w-4" />
+                            <XCircle className="h-4 w-4 mr-1" />
+                            Reject
                           </Button>
                         </>
                       )}

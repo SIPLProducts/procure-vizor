@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Truck, Package, Users, LogIn, LogOut, Clock, AlertTriangle, CheckCircle } from "lucide-react";
-import { VehicleEntry, MaterialEntry, VisitorEntry } from "@/pages/GateEntry";
+import { VehicleEntry, MaterialEntry, VisitorEntry } from "@/contexts/GateEntryContext";
 
 interface GateEntrySummaryProps {
   vehicles: VehicleEntry[];

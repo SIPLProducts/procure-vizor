@@ -17,15 +17,12 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Truck, Search, Plus, Eye, LogOut, Phone } from "lucide-react";
-import { VehicleEntry } from "@/pages/GateEntry";
+import { useGateEntry, VehicleEntry } from "@/contexts/GateEntryContext";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
-interface VehicleRegistryProps {
-  vehicles: VehicleEntry[];
-}
-
-export const VehicleRegistry = ({ vehicles }: VehicleRegistryProps) => {
+export const VehicleRegistry = () => {
+  const { vehicles, addVehicle, updateVehicle } = useGateEntry();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
@@ -79,6 +76,7 @@ export const VehicleRegistry = ({ vehicles }: VehicleRegistryProps) => {
   };
 
   const handleCheckOut = (vehicle: VehicleEntry) => {
+    updateVehicle(vehicle.id, { status: "out", exitTime: new Date() });
     toast.success(`Vehicle ${vehicle.vehicleNumber} checked out successfully`);
   };
 
@@ -87,6 +85,11 @@ export const VehicleRegistry = ({ vehicles }: VehicleRegistryProps) => {
       toast.error("Please fill in all required fields");
       return;
     }
+    addVehicle({
+      ...newVehicle,
+      entryTime: new Date(),
+      status: "in",
+    });
     toast.success(`Vehicle ${newVehicle.vehicleNumber} registered successfully`);
     setIsNewEntryOpen(false);
     setNewVehicle({

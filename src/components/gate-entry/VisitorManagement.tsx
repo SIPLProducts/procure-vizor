@@ -18,15 +18,12 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Users, Search, Plus, Eye, LogIn, LogOut, Phone, Laptop, Car } from "lucide-react";
-import { VisitorEntry } from "@/pages/GateEntry";
+import { useGateEntry, VisitorEntry } from "@/contexts/GateEntryContext";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
-interface VisitorManagementProps {
-  visitors: VisitorEntry[];
-}
-
-export const VisitorManagement = ({ visitors }: VisitorManagementProps) => {
+export const VisitorManagement = () => {
+  const { visitors, addVisitor, updateVisitor } = useGateEntry();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isNewVisitorOpen, setIsNewVisitorOpen] = useState(false);
@@ -70,10 +67,17 @@ export const VisitorManagement = ({ visitors }: VisitorManagementProps) => {
   };
 
   const handleCheckIn = (visitor: VisitorEntry) => {
-    toast.success(`${visitor.name} checked in successfully. Badge: VB-${Math.floor(Math.random() * 100) + 1}`);
+    const badgeNumber = `VB-${Math.floor(Math.random() * 100) + 1}`;
+    updateVisitor(visitor.id, { 
+      status: "checked_in", 
+      entryTime: new Date(),
+      badge: badgeNumber 
+    });
+    toast.success(`${visitor.name} checked in successfully. Badge: ${badgeNumber}`);
   };
 
   const handleCheckOut = (visitor: VisitorEntry) => {
+    updateVisitor(visitor.id, { status: "checked_out", exitTime: new Date() });
     toast.success(`${visitor.name} checked out successfully`);
   };
 
@@ -82,6 +86,22 @@ export const VisitorManagement = ({ visitors }: VisitorManagementProps) => {
       toast.error("Please fill in all required fields");
       return;
     }
+    addVisitor({
+      name: newVisitor.name,
+      phone: newVisitor.phone,
+      email: newVisitor.email || undefined,
+      company: newVisitor.company || undefined,
+      idType: newVisitor.idType,
+      idNumber: newVisitor.idNumber,
+      purpose: newVisitor.purpose,
+      hostName: newVisitor.hostName,
+      hostDepartment: newVisitor.hostDepartment,
+      entryTime: new Date(),
+      status: "expected",
+      vehicleNumber: newVisitor.vehicleNumber || undefined,
+      laptop: newVisitor.laptop,
+      laptopSerial: newVisitor.laptopSerial || undefined,
+    });
     toast.success(`Visitor ${newVisitor.name} pre-registered successfully`);
     setIsNewVisitorOpen(false);
     setNewVisitor({
@@ -399,10 +419,6 @@ export const VisitorManagement = ({ visitors }: VisitorManagementProps) => {
                                   <p className="font-medium">{visitor.laptopSerial}</p>
                                 </div>
                               )}
-                            </div>
-                            <div>
-                              <Label className="text-muted-foreground">Purpose</Label>
-                              <p className="text-sm">{visitor.purpose}</p>
                             </div>
                           </div>
                         </DialogContent>
