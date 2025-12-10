@@ -52,11 +52,46 @@ export function InviteVendor() {
 
     setIsLoading(true);
     try {
+      // Check for existing pending invitation
+      const { data: existingInvitation, error: checkError } = await supabase
+        .from("vendor_invitations")
+        .select("id, status")
+        .eq("vendor_email", data.email.toLowerCase().trim())
+        .in("status", ["pending", "documents_pending"])
+        .maybeSingle();
+
+      if (checkError) throw checkError;
+
+      if (existingInvitation) {
+        toast.error("Invitation already exists", {
+          description: `A pending invitation already exists for ${data.email}`,
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Check if vendor already exists with this email
+      const { data: existingVendor, error: vendorCheckError } = await supabase
+        .from("vendors")
+        .select("id, status")
+        .eq("email", data.email.toLowerCase().trim())
+        .maybeSingle();
+
+      if (vendorCheckError) throw vendorCheckError;
+
+      if (existingVendor) {
+        toast.error("Vendor already exists", {
+          description: `A vendor with email ${data.email} already exists in the system`,
+        });
+        setIsLoading(false);
+        return;
+      }
+
       const token = crypto.randomUUID();
       
       const { error } = await supabase.from("vendor_invitations").insert({
-        vendor_email: data.email,
-        vendor_name: data.vendorName,
+        vendor_email: data.email.toLowerCase().trim(),
+        vendor_name: data.vendorName.trim(),
         required_documents: selectedDocs,
         invitation_token: token,
         created_by: user?.id,
