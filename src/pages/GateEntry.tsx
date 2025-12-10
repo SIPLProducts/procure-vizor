@@ -4,6 +4,7 @@ import { GateEntrySummary } from "@/components/gate-entry/GateEntrySummary";
 import { VehicleRegistry } from "@/components/gate-entry/VehicleRegistry";
 import { MaterialTracking } from "@/components/gate-entry/MaterialTracking";
 import { VisitorManagement } from "@/components/gate-entry/VisitorManagement";
+import { GateEntryReports } from "@/components/gate-entry/GateEntryReports";
 import { useGateEntry } from "@/contexts/GateEntryContext";
 
 // Re-export types from context for backward compatibility
@@ -25,10 +26,11 @@ const GateEntry = () => {
         />
 
         <Tabs defaultValue="vehicles" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
             <TabsTrigger value="vehicles">Vehicle Registry</TabsTrigger>
             <TabsTrigger value="materials">Material Tracking</TabsTrigger>
             <TabsTrigger value="visitors">Visitor Management</TabsTrigger>
+            <TabsTrigger value="reports">Reports</TabsTrigger>
           </TabsList>
 
           <TabsContent value="vehicles">
@@ -41,6 +43,10 @@ const GateEntry = () => {
 
           <TabsContent value="visitors">
             <VisitorManagement />
+          </TabsContent>
+
+          <TabsContent value="reports">
+            <GateEntryReports />
           </TabsContent>
         </Tabs>
       </div>
