@@ -1,4 +1,4 @@
-import { Bell, Search, User, Moon, Sun, PanelLeftClose, PanelLeft } from "lucide-react";
+import { Bell, Search, User, Moon, Sun, PanelLeftClose, PanelLeft, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -8,6 +8,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface HeaderProps {
   title: string;
@@ -18,10 +26,15 @@ interface HeaderProps {
 
 export function Header({ title, subtitle, sidebarCollapsed, onToggleSidebar }: HeaderProps) {
   const [isDark, setIsDark] = useState(false);
+  const { user, signOut } = useAuth();
 
   const toggleTheme = () => {
     setIsDark(!isDark);
     document.documentElement.classList.toggle('dark');
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
   };
 
   return (
@@ -82,12 +95,27 @@ export function Header({ title, subtitle, sidebarCollapsed, onToggleSidebar }: H
           <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full animate-pulse-soft" />
         </Button>
 
-        {/* Profile */}
-        <Button variant="ghost" size="icon" className="p-0">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-md shadow-primary/20 transition-transform duration-200 hover:scale-105">
-            <User className="w-4 h-4 text-primary-foreground" />
-          </div>
-        </Button>
+        {/* Profile Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="p-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-md shadow-primary/20 transition-transform duration-200 hover:scale-105">
+                <User className="w-4 h-4 text-primary-foreground" />
+              </div>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <div className="px-2 py-1.5">
+              <p className="text-sm font-medium">{user?.user_metadata?.full_name || 'User'}</p>
+              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
     </TooltipProvider>
