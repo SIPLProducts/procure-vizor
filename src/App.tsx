@@ -8,6 +8,7 @@ import Vendors from "./pages/Vendors";
 import RFQManagement from "./pages/RFQManagement";
 import PurchaseOrders from "./pages/PurchaseOrders";
 import Inventory from "./pages/Inventory";
+import ShipmentTracking from "./pages/ShipmentTracking";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/rfq" element={<RFQManagement />} />
           <Route path="/purchase-orders" element={<PurchaseOrders />} />
           <Route path="/inventory" element={<Inventory />} />
+          <Route path="/shipments" element={<ShipmentTracking />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
