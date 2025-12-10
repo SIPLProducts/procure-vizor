@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { GateEntryProvider } from "@/contexts/GateEntryContext";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { BannerThemeProvider } from "@/contexts/BannerThemeContext";
 import Index from "./pages/Index";
 import Vendors from "./pages/Vendors";
 import RFQManagement from "./pages/RFQManagement";
@@ -63,13 +64,15 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <GateEntryProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </GateEntryProvider>
+        <BannerThemeProvider>
+          <GateEntryProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </GateEntryProvider>
+        </BannerThemeProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
