@@ -78,13 +78,13 @@ export function Sidebar({ collapsed }: SidebarProps) {
         <TooltipProvider delayDuration={0}>
           {!collapsed && (
             <div className="px-6 mb-5">
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-600/80">
+              <span className="text-[13px] font-bold uppercase tracking-[0.15em] text-emerald-600/80">
                 Navigation
               </span>
               <div className="mt-2 h-0.5 w-8 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" />
             </div>
           )}
-          <ul className={cn("space-y-1", collapsed ? "px-3" : "px-4")}>
+          <ul className={cn("space-y-1.5", collapsed ? "px-3" : "px-4")}>
             {navItems.map((item, index) => {
               const isActive = location.pathname === item.path;
               const Icon = item.icon;
@@ -94,7 +94,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
                   to={item.path}
                   className={cn(
                     "group flex items-center gap-4 rounded-xl font-medium transition-all duration-200 relative",
-                    collapsed ? "justify-center p-3" : "px-4 py-3.5",
+                    collapsed ? "justify-center p-3.5" : "px-4 py-3.5",
                     isActive
                       ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25"
                       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -107,7 +107,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
                   
                   <Icon className={cn(
                     "flex-shrink-0 transition-all duration-200",
-                    collapsed ? "w-6 h-6" : "w-5 h-5",
+                    collapsed ? "w-6 h-6" : "w-[22px] h-[22px]",
                     isActive ? "text-white" : "text-slate-500 group-hover:text-emerald-600",
                     !isActive && "group-hover:scale-110"
                   )} />
@@ -152,14 +152,14 @@ export function Sidebar({ collapsed }: SidebarProps) {
       </nav>
 
       {/* Footer with brand accent */}
-      <div className="relative px-4 py-4 border-t border-slate-200/80">
-        <div className="flex items-center justify-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-500" />
-          <div className="w-2 h-2 rounded-full bg-amber-500" />
-          <div className="w-2 h-2 rounded-full bg-red-500" />
+      <div className="relative px-4 py-5 border-t border-slate-200/80">
+        <div className="flex items-center justify-center gap-2.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+          <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+          <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
         </div>
         {!collapsed && (
-          <p className="text-[10px] text-center text-slate-400 mt-2 font-medium uppercase tracking-wider">
+          <p className="text-[11px] text-center text-slate-400 mt-2.5 font-semibold uppercase tracking-[0.15em]">
             Powering Progress
           </p>
         )}
