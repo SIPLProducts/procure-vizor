@@ -2,6 +2,12 @@ import { Bell, Search, User, Moon, Sun, PanelLeftClose, PanelLeft } from "lucide
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface HeaderProps {
   title: string;
@@ -19,21 +25,30 @@ export function Header({ title, subtitle, sidebarCollapsed, onToggleSidebar }: H
   };
 
   return (
-    <header className="h-16 bg-card/80 backdrop-blur-xl border-b border-border/50 flex items-center justify-between px-6 sticky top-0 z-40">
-      <div className="flex items-center gap-4">
-        {/* Sidebar Toggle */}
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={onToggleSidebar}
-          className="text-muted-foreground hover:text-foreground"
-        >
-          {sidebarCollapsed ? (
-            <PanelLeft className="w-5 h-5" />
-          ) : (
-            <PanelLeftClose className="w-5 h-5" />
-          )}
-        </Button>
+    <TooltipProvider delayDuration={300}>
+      <header className="h-16 bg-card/80 backdrop-blur-xl border-b border-border/50 flex items-center justify-between px-6 sticky top-0 z-40">
+        <div className="flex items-center gap-4">
+          {/* Sidebar Toggle */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={onToggleSidebar}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                {sidebarCollapsed ? (
+                  <PanelLeft className="w-5 h-5" />
+                ) : (
+                  <PanelLeftClose className="w-5 h-5" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>{sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}</p>
+              <p className="text-xs text-muted-foreground">⌘B / Ctrl+B</p>
+            </TooltipContent>
+          </Tooltip>
 
         <div className="animate-fade-in">
           <h1 className="text-xl font-bold text-foreground tracking-tight">{title}</h1>
@@ -75,5 +90,6 @@ export function Header({ title, subtitle, sidebarCollapsed, onToggleSidebar }: H
         </Button>
       </div>
     </header>
+    </TooltipProvider>
   );
 }
