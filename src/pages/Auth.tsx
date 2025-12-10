@@ -155,7 +155,9 @@ export default function Auth() {
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20 text-white">
           <div className="mb-10">
-            <img src={dicabsLogo} alt="DICABS Logo" className="h-20 object-contain drop-shadow-2xl" />
+            <div className="inline-block bg-white/95 backdrop-blur-sm rounded-xl px-6 py-4 shadow-2xl">
+              <img src={dicabsLogo} alt="DICABS Logo" className="h-16 object-contain" />
+            </div>
           </div>
 
           <h2 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
