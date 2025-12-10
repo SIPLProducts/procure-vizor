@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const data = [
   { month: "Jan", currentYear: 42, lastYear: 38 },
@@ -24,21 +24,21 @@ export function YearOnYearChart() {
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-slate-800">Year on Year Comparison</h3>
+          <h3 className="text-lg font-bold text-slate-800">Year on Year Comparison</h3>
           <p className="text-sm text-slate-500">Purchase orders: 2024 vs 2023</p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-50 border border-green-100">
-          <span className="text-sm font-semibold text-green-600">+{growthPercent}% YoY</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100">
+          <span className="text-sm font-semibold text-emerald-600">+{growthPercent}% YoY</span>
         </div>
       </div>
       
       <div className="flex items-center gap-6 mb-4">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500" />
+          <div className="w-3 h-3 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500" />
           <span className="text-sm text-slate-600">2024 (₹{currentYearTotal}L)</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-slate-300" />
+          <div className="w-3 h-3 rounded-full bg-slate-200" />
           <span className="text-sm text-slate-600">2023 (₹{lastYearTotal}L)</span>
         </div>
       </div>
@@ -46,8 +46,8 @@ export function YearOnYearChart() {
       <ResponsiveContainer width="100%" height={280}>
         <BarChart data={data} barGap={2}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-          <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
-          <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+          <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+          <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
           <Tooltip
             contentStyle={{
               backgroundColor: "white",
@@ -57,14 +57,14 @@ export function YearOnYearChart() {
             }}
             formatter={(value: number) => [`₹${value}L`, ""]}
           />
-          <Bar dataKey="currentYear" name="2024" fill="url(#colorCurrent)" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="lastYear" name="2023" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
           <defs>
-            <linearGradient id="colorCurrent" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#10b981" />
-              <stop offset="100%" stopColor="#14b8a6" />
+            <linearGradient id="colorCurrentYoY" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#6366f1" />
+              <stop offset="100%" stopColor="#8b5cf6" />
             </linearGradient>
           </defs>
+          <Bar dataKey="currentYear" name="2024" fill="url(#colorCurrentYoY)" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="lastYear" name="2023" fill="#e2e8f0" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
