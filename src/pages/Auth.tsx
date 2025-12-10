@@ -102,79 +102,115 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left side - Branding */}
+      {/* Left side - Branding with vibrant gradient */}
       <div 
         className="hidden lg:flex lg:w-1/2 xl:w-3/5 relative overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, hsl(226 50% 12%) 0%, hsl(230 60% 18%) 50%, hsl(250 50% 20%) 100%)'
+          background: 'linear-gradient(135deg, hsl(160 60% 8%) 0%, hsl(180 50% 12%) 30%, hsl(45 60% 15%) 60%, hsl(350 50% 18%) 100%)'
         }}
       >
-        {/* Animated background elements */}
+        {/* Vibrant animated background elements - DICABS colors */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-40 right-20 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-info/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+          {/* Green glow - top left */}
+          <div 
+            className="absolute top-10 left-10 w-80 h-80 rounded-full blur-[100px] animate-pulse"
+            style={{ background: 'hsl(150 70% 45% / 0.4)' }}
+          />
+          {/* Yellow/Gold glow - center */}
+          <div 
+            className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full blur-[120px] animate-pulse"
+            style={{ background: 'hsl(45 90% 50% / 0.35)', animationDelay: '0.5s' }}
+          />
+          {/* Red glow - bottom right */}
+          <div 
+            className="absolute bottom-20 right-10 w-72 h-72 rounded-full blur-[100px] animate-pulse"
+            style={{ background: 'hsl(0 70% 50% / 0.35)', animationDelay: '1s' }}
+          />
+          {/* Teal accent - bottom left */}
+          <div 
+            className="absolute bottom-40 left-20 w-64 h-64 rounded-full blur-[80px] animate-pulse"
+            style={{ background: 'hsl(180 60% 40% / 0.3)', animationDelay: '1.5s' }}
+          />
         </div>
 
-        {/* Grid pattern */}
+        {/* Geometric pattern overlay */}
         <div 
-          className="absolute inset-0 opacity-10"
+          className="absolute inset-0 opacity-[0.08]"
           style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px)`,
-            backgroundSize: '50px 50px'
+            backgroundImage: `
+              linear-gradient(30deg, rgba(255,255,255,0.1) 1px, transparent 1px),
+              linear-gradient(150deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px'
           }}
         />
 
+        {/* Diagonal accent lines */}
+        <div className="absolute inset-0 overflow-hidden opacity-20">
+          <div className="absolute top-0 -left-20 w-[200%] h-px bg-gradient-to-r from-transparent via-emerald-400 to-transparent transform rotate-12" />
+          <div className="absolute top-1/4 -left-20 w-[200%] h-px bg-gradient-to-r from-transparent via-yellow-400 to-transparent transform -rotate-6" />
+          <div className="absolute top-2/3 -left-20 w-[200%] h-px bg-gradient-to-r from-transparent via-red-400 to-transparent transform rotate-3" />
+        </div>
+
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20 text-white">
-          <div className="mb-8">
-            <img src={dicabsLogo} alt="DICABS Logo" className="h-16 object-contain" />
+          <div className="mb-10">
+            <img src={dicabsLogo} alt="DICABS Logo" className="h-20 object-contain drop-shadow-2xl" />
           </div>
 
           <h2 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
             Streamline Your<br />
-            <span className="text-gradient bg-gradient-to-r from-primary-glow to-accent bg-clip-text text-transparent">
+            <span 
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: 'linear-gradient(90deg, hsl(150 70% 55%), hsl(45 90% 55%), hsl(0 70% 55%))' }}
+            >
               Procurement Process
             </span>
           </h2>
 
-          <p className="text-lg text-white/70 max-w-md mb-10 leading-relaxed">
+          <p className="text-lg text-white/75 max-w-md mb-10 leading-relaxed">
             Manage vendors, track shipments, control inventory, and optimize your supply chain — all in one powerful platform.
           </p>
 
-          {/* Feature highlights */}
+          {/* Feature highlights with colorful dots */}
           <div className="space-y-4">
             {[
-              "Real-time inventory tracking",
-              "Automated RFQ management",
-              "Vendor performance analytics",
-              "Gate entry & weighbridge integration"
+              { text: "Real-time inventory tracking", color: "hsl(150 70% 50%)" },
+              { text: "Automated RFQ management", color: "hsl(180 60% 45%)" },
+              { text: "Vendor performance analytics", color: "hsl(45 90% 55%)" },
+              { text: "Gate entry & weighbridge integration", color: "hsl(0 70% 55%)" }
             ].map((feature, index) => (
               <div 
-                key={feature} 
-                className="flex items-center gap-3 text-white/80"
+                key={feature.text} 
+                className="flex items-center gap-3 text-white/85 group animate-fade-in"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary to-accent" />
-                <span className="text-sm font-medium">{feature}</span>
+                <div 
+                  className="w-2.5 h-2.5 rounded-full shadow-lg transition-transform group-hover:scale-125"
+                  style={{ background: feature.color, boxShadow: `0 0 12px ${feature.color}` }}
+                />
+                <span className="text-sm font-medium tracking-wide">{feature.text}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Bottom decoration */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        {/* Bottom gradient line */}
+        <div 
+          className="absolute bottom-0 left-0 right-0 h-1"
+          style={{ background: 'linear-gradient(90deg, hsl(150 70% 45%), hsl(45 90% 55%), hsl(0 70% 50%))' }}
+        />
       </div>
 
       {/* Right side - Auth forms */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-background">
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-gradient-to-br from-background via-background to-muted/30">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="mb-8 lg:hidden">
-            <img src={dicabsLogo} alt="DICABS Logo" className="h-12 object-contain" />
+            <img src={dicabsLogo} alt="DICABS Logo" className="h-14 object-contain" />
           </div>
 
-          <Card className="border-border/40 shadow-2xl shadow-primary/5">
+          <Card className="border-border/50 shadow-2xl shadow-black/10 bg-card/95 backdrop-blur-sm">
             <CardHeader className="space-y-1 pb-4">
               <CardTitle className="text-2xl font-bold">
                 {activeTab === "login" ? "Welcome back" : "Create an account"}
@@ -187,9 +223,9 @@ export default function Auth() {
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="login">Sign In</TabsTrigger>
-                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-6 p-1 bg-muted/60">
+                  <TabsTrigger value="login" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-500 data-[state=active]:text-white">Sign In</TabsTrigger>
+                  <TabsTrigger value="signup" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-500 data-[state=active]:text-white">Sign Up</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="login" className="space-y-4">
@@ -224,7 +260,11 @@ export default function Auth() {
                         />
                       </div>
                     </div>
-                    <Button type="submit" className="w-full h-11" disabled={isLoading}>
+                    <Button 
+                      type="submit" 
+                      className="w-full h-11 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/25 transition-all hover:shadow-emerald-500/40" 
+                      disabled={isLoading}
+                    >
                       {isLoading ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
@@ -284,7 +324,11 @@ export default function Auth() {
                         />
                       </div>
                     </div>
-                    <Button type="submit" className="w-full h-11" disabled={isLoading}>
+                    <Button 
+                      type="submit" 
+                      className="w-full h-11 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-amber-500/25 transition-all hover:shadow-amber-500/40" 
+                      disabled={isLoading}
+                    >
                       {isLoading ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
