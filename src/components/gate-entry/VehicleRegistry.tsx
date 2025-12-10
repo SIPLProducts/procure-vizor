@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Truck, Search, Plus, Eye, LogOut, Phone } from "lucide-react";
 import { useGateEntry, VehicleEntry } from "@/contexts/GateEntryContext";
+import { PrintGatePass } from "./PrintGatePass";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -341,6 +342,7 @@ export const VehicleRegistry = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex gap-1 justify-end">
+                      <PrintGatePass type="vehicle" data={vehicle} />
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button

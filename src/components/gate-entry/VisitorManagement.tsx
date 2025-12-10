@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Users, Search, Plus, Eye, LogIn, LogOut, Phone, Laptop, Car } from "lucide-react";
 import { useGateEntry, VisitorEntry } from "@/contexts/GateEntryContext";
+import { PrintGatePass } from "./PrintGatePass";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -376,6 +377,7 @@ export const VisitorManagement = () => {
                   <TableCell>{getStatusBadge(visitor.status)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex gap-1 justify-end">
+                      <PrintGatePass type="visitor" data={visitor} />
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button variant="ghost" size="sm">
