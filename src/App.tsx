@@ -8,6 +8,8 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { BannerThemeProvider } from "@/contexts/BannerThemeContext";
 import Index from "./pages/Index";
 import Vendors from "./pages/Vendors";
+import VendorOnboarding from "./pages/VendorOnboarding";
+import VendorProfile from "./pages/VendorProfile";
 import RFQManagement from "./pages/RFQManagement";
 import PurchaseOrders from "./pages/PurchaseOrders";
 import Inventory from "./pages/Inventory";
@@ -48,6 +50,8 @@ function AppRoutes() {
       <Route path="/auth" element={<Auth />} />
       <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
       <Route path="/vendors" element={<ProtectedRoute><Vendors /></ProtectedRoute>} />
+      <Route path="/vendors/onboarding" element={<ProtectedRoute><VendorOnboarding /></ProtectedRoute>} />
+      <Route path="/vendors/:id" element={<ProtectedRoute><VendorProfile /></ProtectedRoute>} />
       <Route path="/rfq" element={<ProtectedRoute><RFQManagement /></ProtectedRoute>} />
       <Route path="/purchase-orders" element={<ProtectedRoute><PurchaseOrders /></ProtectedRoute>} />
       <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
