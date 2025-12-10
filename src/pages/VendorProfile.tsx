@@ -16,6 +16,10 @@ import {
   ArrowLeft,
   Edit,
   MoreHorizontal,
+  Eye,
+  Download,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -25,6 +29,35 @@ import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { DocumentUpload } from "@/components/vendor/DocumentUpload";
+
+type DocumentStatus = "pending" | "approved" | "rejected" | "expired";
+
+interface VendorDocument {
+  id: string;
+  document_type: string;
+  document_name: string;
+  file_url: string | null;
+  status: DocumentStatus;
+  uploaded_at: string;
+}
+
+const documentStatusConfig: Record<DocumentStatus, { label: string; color: string }> = {
+  pending: { label: "Pending", color: "bg-yellow-100 text-yellow-700" },
+  approved: { label: "Approved", color: "bg-green-100 text-green-700" },
+  rejected: { label: "Rejected", color: "bg-red-100 text-red-700" },
+  expired: { label: "Expired", color: "bg-slate-100 text-slate-700" },
+};
+
+const documentTypeLabels: Record<string, string> = {
+  pan: "PAN Card",
+  gst: "GST Certificate",
+  cancelled_cheque: "Cancelled Cheque",
+  incorporation_cert: "Certificate of Incorporation",
+  msme_cert: "MSME Certificate",
+  iso_cert: "ISO Certification",
+  other: "Other Document",
+};
 
 type VendorStatus = "pending" | "documents_pending" | "approved" | "rejected" | "active" | "inactive" | "blocked";
 type RiskLevel = "low" | "medium" | "high";
@@ -66,28 +99,46 @@ export default function VendorProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [vendor, setVendor] = useState<VendorData | null>(null);
+  const [documents, setDocuments] = useState<VendorDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const fetchVendor = async () => {
+    if (!id) return;
+    try {
+      const { data, error } = await supabase
+        .from("vendors")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (error) throw error;
+      setVendor(data as VendorData);
+    } catch (error: any) {
+      toast.error("Failed to fetch vendor");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchDocuments = async () => {
+    if (!id) return;
+    try {
+      const { data, error } = await supabase
+        .from("vendor_documents")
+        .select("*")
+        .eq("vendor_id", id)
+        .order("uploaded_at", { ascending: false });
+
+      if (error) throw error;
+      setDocuments((data as VendorDocument[]) || []);
+    } catch (error: any) {
+      console.error("Failed to fetch documents:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchVendor = async () => {
-      if (!id) return;
-      try {
-        const { data, error } = await supabase
-          .from("vendors")
-          .select("*")
-          .eq("id", id)
-          .maybeSingle();
-
-        if (error) throw error;
-        setVendor(data as VendorData);
-      } catch (error: any) {
-        toast.error("Failed to fetch vendor");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchVendor();
+    fetchDocuments();
   }, [id]);
 
   if (isLoading) {
@@ -255,9 +306,52 @@ export default function VendorProfile() {
           </TabsContent>
 
           <TabsContent value="documents">
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">Uploaded Documents</h3>
-              <p className="text-slate-500">No documents uploaded yet.</p>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                <h3 className="text-lg font-semibold text-slate-800 mb-4">Uploaded Documents</h3>
+                {documents.length === 0 ? (
+                  <p className="text-slate-500">No documents uploaded yet.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {documents.map((doc) => {
+                      const docStatus = documentStatusConfig[doc.status] || documentStatusConfig.pending;
+                      return (
+                        <div
+                          key={doc.id}
+                          className="flex items-center justify-between p-4 rounded-xl border border-slate-200"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-slate-100">
+                              <FileText className="w-5 h-5 text-slate-600" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-slate-800">
+                                {documentTypeLabels[doc.document_type] || doc.document_type}
+                              </p>
+                              <p className="text-sm text-slate-500">
+                                {doc.document_name} • {format(new Date(doc.uploaded_at), "dd MMM yyyy")}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge className={docStatus.color}>{docStatus.label}</Badge>
+                            {doc.file_url && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => window.open(doc.file_url!, "_blank")}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+              <DocumentUpload vendorId={id!} onUploadComplete={fetchDocuments} />
             </div>
           </TabsContent>
 
