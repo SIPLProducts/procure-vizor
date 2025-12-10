@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { SpendByCategoryChart } from "@/components/dashboard/SpendByCategoryChart";
@@ -7,6 +6,7 @@ import { RFQSpotlight } from "@/components/dashboard/RFQSpotlight";
 import { ShipmentSummary } from "@/components/dashboard/ShipmentSummary";
 import { StockAlerts } from "@/components/dashboard/StockAlerts";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBannerTheme } from "@/contexts/BannerThemeContext";
 import {
   Users,
   ShieldCheck,
@@ -17,67 +17,12 @@ import {
   Clock,
   AlertCircle,
   Sparkles,
-  Palette,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-const colorSchemes = {
-  brand: {
-    name: "DICABS Brand",
-    gradient: "from-emerald-500 via-teal-500 to-cyan-500",
-    shadow: "shadow-emerald-500/20",
-  },
-  ocean: {
-    name: "Deep Blue",
-    gradient: "from-blue-600 via-blue-500 to-indigo-500",
-    shadow: "shadow-blue-500/20",
-  },
-  sunset: {
-    name: "Warm Sunset",
-    gradient: "from-orange-500 via-amber-500 to-yellow-500",
-    shadow: "shadow-orange-500/20",
-  },
-  elegant: {
-    name: "Dark Elegant",
-    gradient: "from-slate-700 via-slate-600 to-zinc-600",
-    shadow: "shadow-slate-500/20",
-  },
-  purple: {
-    name: "Royal Purple",
-    gradient: "from-purple-600 via-violet-500 to-fuchsia-500",
-    shadow: "shadow-purple-500/20",
-  },
-  forest: {
-    name: "Forest Green",
-    gradient: "from-green-600 via-emerald-600 to-teal-600",
-    shadow: "shadow-green-500/20",
-  },
-  rose: {
-    name: "Rose Gold",
-    gradient: "from-rose-500 via-pink-500 to-red-400",
-    shadow: "shadow-rose-500/20",
-  },
-  midnight: {
-    name: "Midnight",
-    gradient: "from-indigo-900 via-purple-900 to-slate-900",
-    shadow: "shadow-indigo-500/20",
-  },
-};
-
-type ColorSchemeKey = keyof typeof colorSchemes;
 
 export default function Dashboard() {
   const { user } = useAuth();
   const userName = user?.user_metadata?.full_name?.split(' ')[0] || 'there';
-  const [selectedScheme, setSelectedScheme] = useState<ColorSchemeKey>("brand");
-
-  const currentScheme = colorSchemes[selectedScheme];
+  const { currentScheme } = useBannerTheme();
 
   return (
     <MainLayout title="Executive Dashboard" subtitle="Real-time procurement insights">
@@ -86,32 +31,9 @@ export default function Dashboard() {
         <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-r ${currentScheme.gradient} p-8 text-white shadow-xl ${currentScheme.shadow} transition-all duration-500`}>
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yIDItNCAyLTRzLTItMi00LTItNCAwLTQgMiAwIDIgMiA0IDIgNCA0IDIgNCAwIDQtMnoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30" />
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                <span className="text-sm font-medium text-white/80 uppercase tracking-wider">Welcome back</span>
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/20">
-                    <Palette className="w-4 h-4 mr-2" />
-                    Theme
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  {Object.entries(colorSchemes).map(([key, scheme]) => (
-                    <DropdownMenuItem
-                      key={key}
-                      onClick={() => setSelectedScheme(key as ColorSchemeKey)}
-                      className="flex items-center gap-3 cursor-pointer"
-                    >
-                      <div className={`w-4 h-4 rounded-full bg-gradient-to-r ${scheme.gradient}`} />
-                      <span>{scheme.name}</span>
-                      {selectedScheme === key && <span className="ml-auto text-primary">✓</span>}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="w-5 h-5" />
+              <span className="text-sm font-medium text-white/80 uppercase tracking-wider">Welcome back</span>
             </div>
             <h2 className="text-3xl font-bold mb-2">Good {getGreeting()}, {userName}!</h2>
             <p className="text-lg text-white/80 max-w-xl">

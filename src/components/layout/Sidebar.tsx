@@ -11,6 +11,7 @@ import {
   Truck,
   DoorOpen,
   Wallet,
+  Palette,
 } from "lucide-react";
 import {
   Tooltip,
@@ -18,7 +19,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import dicabsLogo from "@/assets/dicabs-logo.png";
+import { useBannerTheme, colorSchemes, ColorSchemeKey } from "@/contexts/BannerThemeContext";
 
 const navItems = [
   { name: "Dashboard", path: "/", icon: LayoutDashboard },
@@ -39,6 +47,7 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed }: SidebarProps) {
   const location = useLocation();
+  const { selectedScheme, setSelectedScheme, currentScheme } = useBannerTheme();
 
   return (
     <aside
@@ -150,6 +159,66 @@ export function Sidebar({ collapsed }: SidebarProps) {
           </ul>
         </TooltipProvider>
       </nav>
+
+      {/* Theme Selector */}
+      <div className={cn(
+        "relative border-t border-slate-200/80",
+        collapsed ? "px-3 py-4" : "px-4 py-4"
+      )}>
+        <TooltipProvider delayDuration={0}>
+          <DropdownMenu>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className={cn(
+                      "w-full flex items-center gap-3 rounded-xl font-medium transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+                      collapsed ? "justify-center p-3.5" : "px-4 py-3"
+                    )}
+                  >
+                    <div className={cn(
+                      "rounded-full bg-gradient-to-r",
+                      currentScheme.gradient,
+                      collapsed ? "w-6 h-6" : "w-5 h-5"
+                    )} />
+                    {!collapsed && (
+                      <>
+                        <span className="text-[15px] font-medium">Theme</span>
+                        <Palette className="w-4 h-4 ml-auto text-slate-400" />
+                      </>
+                    )}
+                  </button>
+                </DropdownMenuTrigger>
+              </TooltipTrigger>
+              {collapsed && (
+                <TooltipContent 
+                  side="right" 
+                  className="font-semibold text-sm bg-slate-900 text-white border-0"
+                >
+                  Theme
+                </TooltipContent>
+              )}
+            </Tooltip>
+            <DropdownMenuContent 
+              align={collapsed ? "center" : "start"} 
+              side="top"
+              className="w-52 bg-white border border-slate-200 shadow-xl z-50"
+            >
+              {Object.entries(colorSchemes).map(([key, scheme]) => (
+                <DropdownMenuItem
+                  key={key}
+                  onClick={() => setSelectedScheme(key as ColorSchemeKey)}
+                  className="flex items-center gap-3 cursor-pointer py-2.5 hover:bg-slate-100"
+                >
+                  <div className={`w-5 h-5 rounded-full bg-gradient-to-r ${scheme.gradient}`} />
+                  <span className="text-slate-700">{scheme.name}</span>
+                  {selectedScheme === key && <span className="ml-auto text-emerald-600 font-bold">✓</span>}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </TooltipProvider>
+      </div>
 
       {/* Footer with brand accent */}
       <div className="relative px-4 py-5 border-t border-slate-200/80">
