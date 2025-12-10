@@ -52,111 +52,114 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* KPI Grid - Row 1 */}
-        <div>
-          <h3 className="text-lg font-semibold text-foreground mb-4">Key Metrics</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <KPICard
-              title="Active Vendors"
-              value="247"
-              change={5.2}
-              changeLabel="vs last month"
-              icon={Users}
-              variant="default"
-            />
-            <KPICard
-              title="KYC Verified"
-              value="94.2%"
-              change={2.1}
-              changeLabel="vs last month"
-              icon={ShieldCheck}
-              variant="success"
-            />
-            <KPICard
-              title="Open RFQs"
-              value="18"
-              icon={FileText}
-              variant="info"
-            />
-            <KPICard
-              title="Quotes Received"
-              value="42"
-              change={12}
-              changeLabel="this week"
-              icon={MessageSquare}
-              variant="default"
-            />
+        {/* Main Dashboard Layout */}
+        <div className="grid grid-cols-1 xl:grid-cols-[280px_1fr] gap-6">
+          {/* Left Sidebar - Vertical KPIs */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">Key Metrics</h3>
+            <div className="flex flex-col gap-4">
+              <KPICard
+                title="Active Vendors"
+                value="247"
+                change={5.2}
+                changeLabel="vs last month"
+                icon={Users}
+                variant="default"
+              />
+              <KPICard
+                title="KYC Verified"
+                value="94.2%"
+                change={2.1}
+                changeLabel="vs last month"
+                icon={ShieldCheck}
+                variant="success"
+              />
+              <KPICard
+                title="Open RFQs"
+                value="18"
+                icon={FileText}
+                variant="info"
+              />
+              <KPICard
+                title="Quotes Received"
+                value="42"
+                change={12}
+                changeLabel="this week"
+                icon={MessageSquare}
+                variant="default"
+              />
+            </div>
+
+            <h3 className="text-lg font-semibold text-foreground pt-2">Financial</h3>
+            <div className="flex flex-col gap-4">
+              <KPICard
+                title="Spend YTD"
+                value="₹4.2 Cr"
+                change={8.5}
+                changeLabel="vs last year"
+                icon={IndianRupee}
+                variant="default"
+              />
+              <KPICard
+                title="Savings YTD"
+                value="₹32.5 L"
+                change={15.2}
+                changeLabel="vs target"
+                icon={TrendingDown}
+                variant="success"
+              />
+              <KPICard
+                title="Avg Lead Time"
+                value="12.5 days"
+                change={-8}
+                changeLabel="improvement"
+                icon={Clock}
+                variant="success"
+              />
+              <KPICard
+                title="Stockout Risk"
+                value="3 items"
+                icon={AlertCircle}
+                variant="warning"
+              />
+            </div>
           </div>
-        </div>
 
-        {/* KPI Grid - Row 2 */}
-        <div>
-          <h3 className="text-lg font-semibold text-foreground mb-4">Financial Overview</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <KPICard
-              title="Spend YTD"
-              value="₹4.2 Cr"
-              change={8.5}
-              changeLabel="vs last year"
-              icon={IndianRupee}
-              variant="default"
-            />
-            <KPICard
-              title="Savings YTD"
-              value="₹32.5 L"
-              change={15.2}
-              changeLabel="vs target"
-              icon={TrendingDown}
-              variant="success"
-            />
-            <KPICard
-              title="Avg Lead Time"
-              value="12.5 days"
-              change={-8}
-              changeLabel="improvement"
-              icon={Clock}
-              variant="success"
-            />
-            <KPICard
-              title="Stockout Risk"
-              value="3 items"
-              icon={AlertCircle}
-              variant="warning"
-            />
-          </div>
-        </div>
+          {/* Right Content - Charts */}
+          <div className="space-y-6">
+            {/* Year on Year Comparison */}
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Yearly Comparison</h3>
+              <YearOnYearChart />
+            </div>
 
-        {/* Year on Year Comparison */}
-        <div>
-          <h3 className="text-lg font-semibold text-foreground mb-4">Yearly Comparison</h3>
-          <YearOnYearChart />
-        </div>
+            {/* Month on Month & Year Comparison */}
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Trends & Comparisons</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <MonthOnMonthChart />
+                <YearComparisonChart />
+              </div>
+            </div>
 
-        {/* Month on Month & Year Comparison */}
-        <div>
-          <h3 className="text-lg font-semibold text-foreground mb-4">Trends & Comparisons</h3>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <MonthOnMonthChart />
-            <YearComparisonChart />
-          </div>
-        </div>
+            {/* Charts Row */}
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Analytics</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <SpendByCategoryChart />
+                <VendorPerformanceChart />
+              </div>
+            </div>
 
-        {/* Charts Row */}
-        <div>
-          <h3 className="text-lg font-semibold text-foreground mb-4">Analytics</h3>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SpendByCategoryChart />
-            <VendorPerformanceChart />
-          </div>
-        </div>
-
-        {/* Cards Row */}
-        <div>
-          <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <RFQSpotlight />
-            <ShipmentSummary />
-            <StockAlerts />
+            {/* Cards Row */}
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <RFQSpotlight />
+                <ShipmentSummary />
+                <StockAlerts />
+              </div>
+            </div>
           </div>
         </div>
       </div>
