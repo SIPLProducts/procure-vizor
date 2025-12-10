@@ -15,6 +15,13 @@ export interface VehicleEntry {
   status: "in" | "out";
   gateNumber: string;
   remarks?: string;
+  // Weighbridge fields
+  entryWeight?: number;
+  exitWeight?: number;
+  netWeight?: number;
+  // Photo capture fields
+  driverPhoto?: string;
+  vehiclePhoto?: string;
 }
 
 export interface MaterialEntry {

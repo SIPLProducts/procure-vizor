@@ -16,9 +16,11 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Truck, Search, Plus, Eye, LogOut, Phone } from "lucide-react";
+import { Truck, Search, Plus, Eye, LogOut, Phone, Scale, Camera } from "lucide-react";
 import { useGateEntry, VehicleEntry } from "@/contexts/GateEntryContext";
 import { PrintGatePass } from "./PrintGatePass";
+import { CameraCapture } from "./CameraCapture";
+import { WeighbridgeInput } from "./WeighbridgeIntegration";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -27,6 +29,8 @@ export const VehicleRegistry = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
+  const [checkoutVehicle, setCheckoutVehicle] = useState<VehicleEntry | null>(null);
+  const [exitWeight, setExitWeight] = useState("");
   const [newVehicle, setNewVehicle] = useState({
     vehicleNumber: "",
     vehicleType: "truck" as const,
@@ -38,6 +42,9 @@ export const VehicleRegistry = () => {
     poNumber: "",
     gateNumber: "Gate 1",
     remarks: "",
+    entryWeight: "",
+    driverPhoto: "",
+    vehiclePhoto: "",
   });
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleEntry | null>(null);
 
@@ -76,9 +83,24 @@ export const VehicleRegistry = () => {
     );
   };
 
-  const handleCheckOut = (vehicle: VehicleEntry) => {
-    updateVehicle(vehicle.id, { status: "out", exitTime: new Date() });
-    toast.success(`Vehicle ${vehicle.vehicleNumber} checked out successfully`);
+  const handleCheckOut = () => {
+    if (!checkoutVehicle) return;
+    
+    const exitWeightNum = parseFloat(exitWeight);
+    const entryWeightNum = checkoutVehicle.entryWeight || 0;
+    const netWeight = exitWeightNum && entryWeightNum 
+      ? Math.abs(entryWeightNum - exitWeightNum) 
+      : undefined;
+
+    updateVehicle(checkoutVehicle.id, { 
+      status: "out", 
+      exitTime: new Date(),
+      exitWeight: exitWeightNum || undefined,
+      netWeight,
+    });
+    toast.success(`Vehicle ${checkoutVehicle.vehicleNumber} checked out successfully`);
+    setCheckoutVehicle(null);
+    setExitWeight("");
   };
 
   const handleCreateEntry = () => {
@@ -90,6 +112,9 @@ export const VehicleRegistry = () => {
       ...newVehicle,
       entryTime: new Date(),
       status: "in",
+      entryWeight: newVehicle.entryWeight ? parseFloat(newVehicle.entryWeight) : undefined,
+      driverPhoto: newVehicle.driverPhoto || undefined,
+      vehiclePhoto: newVehicle.vehiclePhoto || undefined,
     });
     toast.success(`Vehicle ${newVehicle.vehicleNumber} registered successfully`);
     setIsNewEntryOpen(false);
@@ -104,6 +129,9 @@ export const VehicleRegistry = () => {
       poNumber: "",
       gateNumber: "Gate 1",
       remarks: "",
+      entryWeight: "",
+      driverPhoto: "",
+      vehiclePhoto: "",
     });
   };
 
@@ -116,7 +144,7 @@ export const VehicleRegistry = () => {
               <Truck className="h-5 w-5" />
               Vehicle Registry
             </CardTitle>
-            <CardDescription>Track all vehicle entries and exits</CardDescription>
+            <CardDescription>Track all vehicle entries and exits with weighbridge & photo capture</CardDescription>
           </div>
           <div className="flex gap-2">
             <div className="relative">
@@ -145,11 +173,32 @@ export const VehicleRegistry = () => {
                   New Entry
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl">
+              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Register New Vehicle</DialogTitle>
-                  <DialogDescription>Enter vehicle and driver details</DialogDescription>
+                  <DialogDescription>Enter vehicle and driver details with photo capture</DialogDescription>
                 </DialogHeader>
+                
+                {/* Photo Capture Section */}
+                <div className="border rounded-lg p-4 bg-muted/30">
+                  <Label className="text-sm font-medium flex items-center gap-2 mb-3">
+                    <Camera className="h-4 w-4" />
+                    Photo Capture (AI Camera)
+                  </Label>
+                  <div className="flex gap-4 justify-center">
+                    <CameraCapture
+                      label="Driver Photo"
+                      currentImage={newVehicle.driverPhoto}
+                      onCapture={(img) => setNewVehicle({ ...newVehicle, driverPhoto: img })}
+                    />
+                    <CameraCapture
+                      label="Vehicle Photo"
+                      currentImage={newVehicle.vehiclePhoto}
+                      onCapture={(img) => setNewVehicle({ ...newVehicle, vehiclePhoto: img })}
+                    />
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4 py-4">
                   <div className="space-y-2">
                     <Label htmlFor="vehicleNumber">Vehicle Number *</Label>
@@ -257,6 +306,16 @@ export const VehicleRegistry = () => {
                       </SelectContent>
                     </Select>
                   </div>
+                  
+                  {/* Weighbridge Section */}
+                  <div className="col-span-2 border rounded-lg p-4 bg-muted/30">
+                    <WeighbridgeInput
+                      label="Entry Weight (Weighbridge)"
+                      value={newVehicle.entryWeight}
+                      onChange={(v) => setNewVehicle({ ...newVehicle, entryWeight: v })}
+                    />
+                  </div>
+
                   <div className="space-y-2 col-span-2">
                     <Label htmlFor="remarks">Remarks</Label>
                     <Textarea
@@ -284,9 +343,8 @@ export const VehicleRegistry = () => {
                 <TableHead>Vehicle</TableHead>
                 <TableHead>Driver</TableHead>
                 <TableHead>Purpose</TableHead>
-                <TableHead>Vendor/PO</TableHead>
+                <TableHead>Weight (kg)</TableHead>
                 <TableHead>Entry Time</TableHead>
-                <TableHead>Gate</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -296,7 +354,15 @@ export const VehicleRegistry = () => {
                 <TableRow key={vehicle.id}>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <span className="text-lg">{getVehicleTypeIcon(vehicle.vehicleType)}</span>
+                      {vehicle.vehiclePhoto ? (
+                        <img 
+                          src={vehicle.vehiclePhoto} 
+                          alt="Vehicle" 
+                          className="h-10 w-10 rounded object-cover"
+                        />
+                      ) : (
+                        <span className="text-lg">{getVehicleTypeIcon(vehicle.vehicleType)}</span>
+                      )}
                       <div>
                         <p className="font-medium">{vehicle.vehicleNumber}</p>
                         <p className="text-xs text-muted-foreground capitalize">
@@ -306,19 +372,47 @@ export const VehicleRegistry = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div>
-                      <p className="font-medium">{vehicle.driverName}</p>
-                      <p className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Phone className="h-3 w-3" />
-                        {vehicle.driverPhone}
-                      </p>
+                    <div className="flex items-center gap-2">
+                      {vehicle.driverPhoto && (
+                        <img 
+                          src={vehicle.driverPhoto} 
+                          alt="Driver" 
+                          className="h-8 w-8 rounded-full object-cover"
+                        />
+                      )}
+                      <div>
+                        <p className="font-medium">{vehicle.driverName}</p>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Phone className="h-3 w-3" />
+                          {vehicle.driverPhone}
+                        </p>
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>{getPurposeBadge(vehicle.purpose)}</TableCell>
                   <TableCell>
-                    {vehicle.vendor && <p className="text-sm">{vehicle.vendor}</p>}
-                    {vehicle.poNumber && (
-                      <p className="text-xs text-muted-foreground">{vehicle.poNumber}</p>
+                    {vehicle.entryWeight ? (
+                      <div className="text-sm">
+                        <div className="flex items-center gap-1">
+                          <Scale className="h-3 w-3 text-emerald-500" />
+                          <span>In: {vehicle.entryWeight.toLocaleString()}</span>
+                        </div>
+                        {vehicle.exitWeight && (
+                          <>
+                            <div className="flex items-center gap-1 text-muted-foreground">
+                              <Scale className="h-3 w-3 text-orange-500" />
+                              <span>Out: {vehicle.exitWeight.toLocaleString()}</span>
+                            </div>
+                            {vehicle.netWeight && (
+                              <div className="font-medium text-blue-500">
+                                Net: {vehicle.netWeight.toLocaleString()}
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
                     )}
                   </TableCell>
                   <TableCell>
@@ -327,7 +421,6 @@ export const VehicleRegistry = () => {
                       {format(vehicle.entryTime, "dd MMM yyyy")}
                     </p>
                   </TableCell>
-                  <TableCell>{vehicle.gateNumber}</TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
@@ -353,7 +446,7 @@ export const VehicleRegistry = () => {
                             <Eye className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
-                        <DialogContent>
+                        <DialogContent className="max-w-lg">
                           <DialogHeader>
                             <DialogTitle>Vehicle Details</DialogTitle>
                             <DialogDescription>
@@ -361,6 +454,32 @@ export const VehicleRegistry = () => {
                             </DialogDescription>
                           </DialogHeader>
                           <div className="space-y-4">
+                            {/* Photos */}
+                            {(vehicle.driverPhoto || vehicle.vehiclePhoto) && (
+                              <div className="flex gap-4 justify-center">
+                                {vehicle.driverPhoto && (
+                                  <div className="text-center">
+                                    <img 
+                                      src={vehicle.driverPhoto} 
+                                      alt="Driver" 
+                                      className="h-24 w-24 rounded-lg object-cover mx-auto"
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-1">Driver</p>
+                                  </div>
+                                )}
+                                {vehicle.vehiclePhoto && (
+                                  <div className="text-center">
+                                    <img 
+                                      src={vehicle.vehiclePhoto} 
+                                      alt="Vehicle" 
+                                      className="h-24 w-24 rounded-lg object-cover mx-auto"
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-1">Vehicle</p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                            
                             <div className="grid grid-cols-2 gap-4">
                               <div>
                                 <Label className="text-muted-foreground">Vehicle Type</Label>
@@ -368,7 +487,7 @@ export const VehicleRegistry = () => {
                               </div>
                               <div>
                                 <Label className="text-muted-foreground">License</Label>
-                                <p className="font-medium">{vehicle.driverLicense}</p>
+                                <p className="font-medium">{vehicle.driverLicense || "-"}</p>
                               </div>
                               <div>
                                 <Label className="text-muted-foreground">Entry Time</Label>
@@ -385,6 +504,35 @@ export const VehicleRegistry = () => {
                                 </div>
                               )}
                             </div>
+
+                            {/* Weighbridge Info */}
+                            {vehicle.entryWeight && (
+                              <div className="border rounded-lg p-3 bg-muted/30">
+                                <Label className="text-muted-foreground flex items-center gap-2 mb-2">
+                                  <Scale className="h-4 w-4" />
+                                  Weighbridge Data
+                                </Label>
+                                <div className="grid grid-cols-3 gap-2 text-center">
+                                  <div className="bg-emerald-500/10 rounded p-2">
+                                    <p className="text-xs text-muted-foreground">Entry</p>
+                                    <p className="font-bold">{vehicle.entryWeight.toLocaleString()} kg</p>
+                                  </div>
+                                  <div className="bg-orange-500/10 rounded p-2">
+                                    <p className="text-xs text-muted-foreground">Exit</p>
+                                    <p className="font-bold">
+                                      {vehicle.exitWeight ? `${vehicle.exitWeight.toLocaleString()} kg` : "-"}
+                                    </p>
+                                  </div>
+                                  <div className="bg-blue-500/10 rounded p-2">
+                                    <p className="text-xs text-muted-foreground">Net</p>
+                                    <p className="font-bold">
+                                      {vehicle.netWeight ? `${vehicle.netWeight.toLocaleString()} kg` : "-"}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
                             {vehicle.remarks && (
                               <div>
                                 <Label className="text-muted-foreground">Remarks</Label>
@@ -395,14 +543,54 @@ export const VehicleRegistry = () => {
                         </DialogContent>
                       </Dialog>
                       {vehicle.status === "in" && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleCheckOut(vehicle)}
-                        >
-                          <LogOut className="h-4 w-4 mr-1" />
-                          Check Out
-                        </Button>
+                        <Dialog open={checkoutVehicle?.id === vehicle.id} onOpenChange={(open) => !open && setCheckoutVehicle(null)}>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setCheckoutVehicle(vehicle)}
+                            >
+                              <LogOut className="h-4 w-4 mr-1" />
+                              Check Out
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Vehicle Checkout</DialogTitle>
+                              <DialogDescription>
+                                {vehicle.vehicleNumber} - Capture exit weight
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4 py-4">
+                              {vehicle.entryWeight && (
+                                <div className="bg-muted/50 rounded-lg p-3">
+                                  <p className="text-sm text-muted-foreground">Entry Weight</p>
+                                  <p className="text-xl font-bold">{vehicle.entryWeight.toLocaleString()} kg</p>
+                                </div>
+                              )}
+                              <WeighbridgeInput
+                                label="Exit Weight"
+                                value={exitWeight}
+                                onChange={setExitWeight}
+                              />
+                              {exitWeight && vehicle.entryWeight && (
+                                <div className="bg-blue-500/10 rounded-lg p-3 text-center">
+                                  <p className="text-sm text-muted-foreground">Net Weight</p>
+                                  <p className="text-2xl font-bold text-blue-600">
+                                    {Math.abs(vehicle.entryWeight - parseFloat(exitWeight)).toLocaleString()} kg
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                            <DialogFooter>
+                              <Button variant="outline" onClick={() => setCheckoutVehicle(null)}>Cancel</Button>
+                              <Button onClick={handleCheckOut}>
+                                <LogOut className="h-4 w-4 mr-2" />
+                                Complete Checkout
+                              </Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
                       )}
                     </div>
                   </TableCell>
