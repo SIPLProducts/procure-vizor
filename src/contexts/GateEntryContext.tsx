@@ -63,6 +63,7 @@ export interface VisitorEntry {
   vehicleNumber?: string;
   laptop?: boolean;
   laptopSerial?: string;
+  verifiedAtCheckIn?: boolean;
 }
 
 interface GateEntryContextType {
