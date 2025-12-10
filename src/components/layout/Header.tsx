@@ -1,4 +1,4 @@
-import { Bell, Search, User, Moon, Sun } from "lucide-react";
+import { Bell, Search, User, Moon, Sun, PanelLeftClose, PanelLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -6,9 +6,11 @@ import { useState } from "react";
 interface HeaderProps {
   title: string;
   subtitle?: string;
+  sidebarCollapsed: boolean;
+  onToggleSidebar: () => void;
 }
 
-export function Header({ title, subtitle }: HeaderProps) {
+export function Header({ title, subtitle, sidebarCollapsed, onToggleSidebar }: HeaderProps) {
   const [isDark, setIsDark] = useState(false);
 
   const toggleTheme = () => {
@@ -18,9 +20,25 @@ export function Header({ title, subtitle }: HeaderProps) {
 
   return (
     <header className="h-16 bg-card/80 backdrop-blur-xl border-b border-border/50 flex items-center justify-between px-6 sticky top-0 z-40">
-      <div className="animate-fade-in">
-        <h1 className="text-xl font-bold text-foreground tracking-tight">{title}</h1>
-        {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+      <div className="flex items-center gap-4">
+        {/* Sidebar Toggle */}
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={onToggleSidebar}
+          className="text-muted-foreground hover:text-foreground"
+        >
+          {sidebarCollapsed ? (
+            <PanelLeft className="w-5 h-5" />
+          ) : (
+            <PanelLeftClose className="w-5 h-5" />
+          )}
+        </Button>
+
+        <div className="animate-fade-in">
+          <h1 className="text-xl font-bold text-foreground tracking-tight">{title}</h1>
+          {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+        </div>
       </div>
 
       <div className="flex items-center gap-3">

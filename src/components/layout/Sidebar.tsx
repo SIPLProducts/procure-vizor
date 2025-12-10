@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -12,8 +11,6 @@ import {
   Truck,
   DoorOpen,
   Wallet,
-  ChevronLeft,
-  ChevronRight,
   Sparkles,
 } from "lucide-react";
 
@@ -30,8 +27,11 @@ const navItems = [
   { name: "Vendor Finance", path: "/vendor-finance", icon: Wallet },
 ];
 
-export function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+interface SidebarProps {
+  collapsed: boolean;
+}
+
+export function Sidebar({ collapsed }: SidebarProps) {
   const location = useLocation();
 
   return (
@@ -99,22 +99,6 @@ export function Sidebar() {
           })}
         </ul>
       </nav>
-
-      {/* Collapse Toggle */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className={cn(
-          "h-12 flex items-center justify-center border-t border-sidebar-border/50 text-sidebar-muted hover:text-sidebar-foreground transition-all duration-200 relative group",
-          "hover:bg-sidebar-accent/50"
-        )}
-      >
-        <div className={cn(
-          "w-7 h-7 rounded-lg bg-sidebar-accent/50 flex items-center justify-center transition-all duration-200",
-          "group-hover:bg-sidebar-accent group-hover:scale-110"
-        )}>
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </div>
-      </button>
     </aside>
   );
 }
