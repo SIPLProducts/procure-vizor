@@ -59,8 +59,8 @@ export function Sidebar({ collapsed }: SidebarProps) {
       {/* Clean white/light gray background */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-50 to-white" />
       
-      {/* Decorative side accent */}
-      <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-500 via-teal-500 to-cyan-500" />
+      {/* Decorative side accent - Ocean Blue */}
+      <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-600 via-blue-500 to-sky-400" />
       
       {/* Logo Section */}
       <div className={cn(
@@ -68,7 +68,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
         collapsed ? "px-4 flex justify-center" : "px-6"
       )}>
         <div className={cn(
-          "bg-white rounded-2xl shadow-md shadow-slate-200/50 border border-slate-100 transition-all duration-300",
+          "bg-white rounded-2xl shadow-md shadow-blue-100/50 border border-slate-100 transition-all duration-300",
           collapsed ? "p-3" : "px-5 py-4"
         )}>
           <img 
@@ -87,10 +87,10 @@ export function Sidebar({ collapsed }: SidebarProps) {
         <TooltipProvider delayDuration={0}>
           {!collapsed && (
             <div className="px-6 mb-5">
-              <span className="text-[13px] font-bold uppercase tracking-[0.15em] text-emerald-600/80">
+              <span className="text-[13px] font-bold uppercase tracking-[0.15em] text-blue-600/80">
                 Navigation
               </span>
-              <div className="mt-2 h-0.5 w-8 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" />
+              <div className="mt-2 h-0.5 w-8 bg-gradient-to-r from-blue-600 to-sky-400 rounded-full" />
             </div>
           )}
           <ul className={cn("space-y-1.5", collapsed ? "px-3" : "px-4")}>
@@ -105,19 +105,19 @@ export function Sidebar({ collapsed }: SidebarProps) {
                     "group flex items-center gap-4 rounded-xl font-medium transition-all duration-200 relative",
                     collapsed ? "justify-center p-3.5" : "px-4 py-3.5",
                     isActive
-                      ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25"
-                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                      ? "bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-lg shadow-blue-500/25"
+                      : "text-slate-600 hover:bg-blue-50/50 hover:text-slate-900"
                   )}
                 >
                   {/* Active indicator bar */}
                   {isActive && !collapsed && (
-                    <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-1 h-8 bg-emerald-600 rounded-r-full" />
+                    <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-600 rounded-r-full" />
                   )}
                   
                   <Icon className={cn(
                     "flex-shrink-0 transition-all duration-200",
                     collapsed ? "w-6 h-6" : "w-[22px] h-[22px]",
-                    isActive ? "text-white" : "text-slate-500 group-hover:text-emerald-600",
+                    isActive ? "text-white" : "text-slate-500 group-hover:text-blue-600",
                     !isActive && "group-hover:scale-110"
                   )} />
                   
@@ -212,7 +212,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
                 >
                   <div className={`w-5 h-5 rounded-full bg-gradient-to-r ${scheme.gradient}`} />
                   <span className="text-slate-700">{scheme.name}</span>
-                  {selectedScheme === key && <span className="ml-auto text-emerald-600 font-bold">✓</span>}
+                  {selectedScheme === key && <span className="ml-auto text-blue-600 font-bold">✓</span>}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -220,12 +220,12 @@ export function Sidebar({ collapsed }: SidebarProps) {
         </TooltipProvider>
       </div>
 
-      {/* Footer with brand accent */}
+      {/* Footer with brand accent - Ocean Blue */}
       <div className="relative px-4 py-5 border-t border-slate-200/80">
         <div className="flex items-center justify-center gap-2.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-          <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-          <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+          <div className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+          <div className="w-2.5 h-2.5 rounded-full bg-sky-400" />
+          <div className="w-2.5 h-2.5 rounded-full bg-blue-400" />
         </div>
         {!collapsed && (
           <p className="text-[11px] text-center text-slate-400 mt-2.5 font-semibold uppercase tracking-[0.15em]">
