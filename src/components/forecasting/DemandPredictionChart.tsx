@@ -74,7 +74,7 @@ export const DemandPredictionChart = ({ items }: DemandPredictionChartProps) => 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Brain className="h-5 w-5 text-purple-500" />
+                <Brain className="h-5 w-5 text-blue-500" />
                 Demand Prediction
               </CardTitle>
               <CardDescription>
@@ -115,7 +115,7 @@ export const DemandPredictionChart = ({ items }: DemandPredictionChartProps) => 
             </div>
             <div className="p-3 rounded-lg bg-muted/50">
               <p className="text-xs text-muted-foreground">Confidence</p>
-              <p className="text-xl font-bold text-purple-500">{item.confidence}%</p>
+              <p className="text-xl font-bold text-blue-500">{item.confidence}%</p>
             </div>
           </div>
 

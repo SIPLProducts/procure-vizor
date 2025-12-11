@@ -170,10 +170,10 @@ const PurchaseForecasting = () => {
         <ForecastingSummaryCards items={mockForecastItems} />
 
         <Tabs defaultValue="predictions" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
-            <TabsTrigger value="predictions">Demand Predictions</TabsTrigger>
-            <TabsTrigger value="historical">Historical Analysis</TabsTrigger>
-            <TabsTrigger value="recommendations">Reorder Recommendations</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid bg-blue-50 border border-blue-100">
+            <TabsTrigger value="predictions" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Demand Predictions</TabsTrigger>
+            <TabsTrigger value="historical" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Historical Analysis</TabsTrigger>
+            <TabsTrigger value="recommendations" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Reorder Recommendations</TabsTrigger>
           </TabsList>
 
           <TabsContent value="predictions">
