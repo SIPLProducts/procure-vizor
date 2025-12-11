@@ -145,7 +145,7 @@ export const ReorderRecommendations = ({ items }: ReorderRecommendationsProps) =
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-purple-500" />
+            <Sparkles className="h-5 w-5 text-blue-500" />
             AI-Powered Reorder Recommendations
           </CardTitle>
           <CardDescription>
@@ -347,13 +347,13 @@ export const ReorderRecommendations = ({ items }: ReorderRecommendationsProps) =
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-purple-500" />
+              <Sparkles className="h-4 w-4 text-blue-500" />
               AI Insights
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+              <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
                 <p className="text-sm font-medium">Seasonal Pattern Detected</p>
                 <p className="text-xs text-muted-foreground">
                   Cardboard Boxes show high seasonality. Consider pre-ordering for Q4 peak demand.
