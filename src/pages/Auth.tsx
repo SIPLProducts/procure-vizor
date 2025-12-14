@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
 import { z } from "zod";
-import dicabsLogo from "@/assets/dicabs-logo.png";
+import sharviLogo from "@/assets/sharvi-logo.png";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -156,7 +156,7 @@ export default function Auth() {
         <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20 text-white">
           <div className="mb-10">
             <div className="inline-block bg-white/95 backdrop-blur-sm rounded-xl px-6 py-4 shadow-2xl">
-              <img src={dicabsLogo} alt="DICABS Logo" className="h-16 object-contain" />
+              <img src={sharviLogo} alt="Sharvi Infotech Logo" className="h-16 object-contain" />
             </div>
           </div>
 
@@ -209,7 +209,7 @@ export default function Auth() {
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="mb-8 lg:hidden">
-            <img src={dicabsLogo} alt="DICABS Logo" className="h-14 object-contain" />
+            <img src={sharviLogo} alt="Sharvi Infotech Logo" className="h-14 object-contain" />
           </div>
 
           <Card className="border-border/50 shadow-2xl shadow-black/10 bg-card/95 backdrop-blur-sm">

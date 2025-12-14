@@ -15,14 +15,16 @@ import {
 import {
   Calendar,
   Package,
-  TrendingUp,
   Clock,
   CheckCircle2,
-  AlertCircle,
   Plus,
   FileText,
   Target,
+  List,
+  CalendarDays,
 } from "lucide-react";
+import { CreatePlanDialog } from "@/components/purchase-plan/CreatePlanDialog";
+import { PlanCalendarView } from "@/components/purchase-plan/PlanCalendarView";
 
 // Mock data for purchase plans
 const mockPlans = [
@@ -31,7 +33,7 @@ const mockPlans = [
     item: "Steel Bars - Grade A",
     quantity: 500,
     unit: "tons",
-    plannedDate: "2024-02-15",
+    plannedDate: "2024-12-15",
     status: "approved",
     priority: "high",
     estimatedCost: 1250000,
@@ -42,7 +44,7 @@ const mockPlans = [
     item: "Copper Wire - 2.5mm",
     quantity: 1000,
     unit: "meters",
-    plannedDate: "2024-02-20",
+    plannedDate: "2024-12-20",
     status: "pending",
     priority: "medium",
     estimatedCost: 450000,
@@ -53,7 +55,7 @@ const mockPlans = [
     item: "PVC Compound",
     quantity: 200,
     unit: "kg",
-    plannedDate: "2024-02-25",
+    plannedDate: "2024-12-25",
     status: "draft",
     priority: "low",
     estimatedCost: 180000,
@@ -64,7 +66,7 @@ const mockPlans = [
     item: "Aluminum Sheets",
     quantity: 300,
     unit: "units",
-    plannedDate: "2024-03-01",
+    plannedDate: "2025-01-01",
     status: "approved",
     priority: "high",
     estimatedCost: 890000,
@@ -75,7 +77,7 @@ const mockPlans = [
     item: "Insulation Material",
     quantity: 750,
     unit: "rolls",
-    plannedDate: "2024-03-05",
+    plannedDate: "2024-12-18",
     status: "pending",
     priority: "medium",
     estimatedCost: 320000,
@@ -103,37 +105,44 @@ const getPriorityBadge = (priority: string) => {
 
 export default function PurchasePlan() {
   const [activeTab, setActiveTab] = useState("all");
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [plans, setPlans] = useState(mockPlans);
 
   const stats = [
     {
       title: "Total Plans",
-      value: "24",
+      value: String(plans.length),
       icon: FileText,
       gradient: "from-blue-500 to-sky-400",
     },
     {
       title: "Approved",
-      value: "12",
+      value: String(plans.filter(p => p.status === "approved").length),
       icon: CheckCircle2,
       gradient: "from-emerald-500 to-teal-400",
     },
     {
       title: "Pending Review",
-      value: "8",
+      value: String(plans.filter(p => p.status === "pending").length),
       icon: Clock,
       gradient: "from-amber-500 to-yellow-400",
     },
     {
       title: "This Month Budget",
-      value: "₹32.5L",
+      value: `₹${(plans.reduce((sum, p) => sum + p.estimatedCost, 0) / 100000).toFixed(1)}L`,
       icon: Target,
       gradient: "from-blue-600 to-blue-400",
     },
   ];
 
   const filteredPlans = activeTab === "all" 
-    ? mockPlans 
-    : mockPlans.filter(plan => plan.status === activeTab);
+    ? plans 
+    : plans.filter(plan => plan.status === activeTab);
+
+  const handlePlanCreated = (newPlan: any) => {
+    setPlans(prev => [newPlan, ...prev]);
+  };
 
   return (
     <MainLayout title="Purchase Plan" subtitle="Plan and manage upcoming material purchases">
@@ -163,97 +172,132 @@ export default function PurchasePlan() {
         })}
       </div>
 
+      {/* View Toggle & Create Button */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center bg-slate-100 rounded-lg p-1">
+          <Button
+            variant={viewMode === "list" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => setViewMode("list")}
+            className={viewMode === "list" ? "bg-gradient-to-r from-blue-600 to-sky-500 text-white" : ""}
+          >
+            <List className="w-4 h-4 mr-2" />
+            List View
+          </Button>
+          <Button
+            variant={viewMode === "calendar" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => setViewMode("calendar")}
+            className={viewMode === "calendar" ? "bg-gradient-to-r from-blue-600 to-sky-500 text-white" : ""}
+          >
+            <CalendarDays className="w-4 h-4 mr-2" />
+            Calendar View
+          </Button>
+        </div>
+        <Button 
+          onClick={() => setCreateDialogOpen(true)}
+          className="bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white shadow-md"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Create Plan
+        </Button>
+      </div>
+
       {/* Main Content */}
-      <Card className="bg-white border-slate-200 shadow-sm">
-        <CardHeader className="border-b border-slate-100">
-          <div className="flex items-center justify-between">
+      {viewMode === "calendar" ? (
+        <PlanCalendarView plans={plans} />
+      ) : (
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100">
             <CardTitle className="text-xl font-semibold text-slate-800 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-blue-600" />
               Purchase Plans
             </CardTitle>
-            <Button className="bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white shadow-md">
-              <Plus className="w-4 h-4 mr-2" />
-              Create Plan
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="p-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="bg-slate-100/80 p-1 mb-6">
-              <TabsTrigger 
-                value="all" 
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-sky-500 data-[state=active]:text-white"
-              >
-                All Plans
-              </TabsTrigger>
-              <TabsTrigger 
-                value="approved"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-sky-500 data-[state=active]:text-white"
-              >
-                Approved
-              </TabsTrigger>
-              <TabsTrigger 
-                value="pending"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-sky-500 data-[state=active]:text-white"
-              >
-                Pending
-              </TabsTrigger>
-              <TabsTrigger 
-                value="draft"
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-sky-500 data-[state=active]:text-white"
-              >
-                Draft
-              </TabsTrigger>
-            </TabsList>
+          </CardHeader>
+          <CardContent className="p-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="bg-slate-100/80 p-1 mb-6">
+                <TabsTrigger 
+                  value="all" 
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-sky-500 data-[state=active]:text-white"
+                >
+                  All Plans
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="approved"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-sky-500 data-[state=active]:text-white"
+                >
+                  Approved
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="pending"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-sky-500 data-[state=active]:text-white"
+                >
+                  Pending
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="draft"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-sky-500 data-[state=active]:text-white"
+                >
+                  Draft
+                </TabsTrigger>
+              </TabsList>
 
-            <TabsContent value={activeTab}>
-              <div className="rounded-lg border border-slate-200 overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-slate-50/80">
-                      <TableHead className="font-semibold text-slate-700">Plan ID</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Item</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Quantity</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Planned Date</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Vendor</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Est. Cost</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Priority</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredPlans.map((plan) => (
-                      <TableRow key={plan.id} className="hover:bg-blue-50/30 transition-colors cursor-pointer">
-                        <TableCell className="font-medium text-blue-600">{plan.id}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Package className="w-4 h-4 text-slate-400" />
-                            {plan.item}
-                          </div>
-                        </TableCell>
-                        <TableCell>{plan.quantity} {plan.unit}</TableCell>
-                        <TableCell>{new Date(plan.plannedDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</TableCell>
-                        <TableCell>{plan.vendor}</TableCell>
-                        <TableCell className="font-medium">₹{(plan.estimatedCost / 100000).toFixed(2)}L</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className={getPriorityBadge(plan.priority)}>
-                            {plan.priority.charAt(0).toUpperCase() + plan.priority.slice(1)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className={getStatusBadge(plan.status)}>
-                            {plan.status.charAt(0).toUpperCase() + plan.status.slice(1)}
-                          </Badge>
-                        </TableCell>
+              <TabsContent value={activeTab}>
+                <div className="rounded-lg border border-slate-200 overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-slate-50/80">
+                        <TableHead className="font-semibold text-slate-700">Plan ID</TableHead>
+                        <TableHead className="font-semibold text-slate-700">Item</TableHead>
+                        <TableHead className="font-semibold text-slate-700">Quantity</TableHead>
+                        <TableHead className="font-semibold text-slate-700">Planned Date</TableHead>
+                        <TableHead className="font-semibold text-slate-700">Vendor</TableHead>
+                        <TableHead className="font-semibold text-slate-700">Est. Cost</TableHead>
+                        <TableHead className="font-semibold text-slate-700">Priority</TableHead>
+                        <TableHead className="font-semibold text-slate-700">Status</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredPlans.map((plan) => (
+                        <TableRow key={plan.id} className="hover:bg-blue-50/30 transition-colors cursor-pointer">
+                          <TableCell className="font-medium text-blue-600">{plan.id}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Package className="w-4 h-4 text-slate-400" />
+                              {plan.item}
+                            </div>
+                          </TableCell>
+                          <TableCell>{plan.quantity} {plan.unit}</TableCell>
+                          <TableCell>{new Date(plan.plannedDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</TableCell>
+                          <TableCell>{plan.vendor}</TableCell>
+                          <TableCell className="font-medium">₹{(plan.estimatedCost / 100000).toFixed(2)}L</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={getPriorityBadge(plan.priority)}>
+                              {plan.priority.charAt(0).toUpperCase() + plan.priority.slice(1)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={getStatusBadge(plan.status)}>
+                              {plan.status.charAt(0).toUpperCase() + plan.status.slice(1)}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      )}
+
+      <CreatePlanDialog 
+        open={createDialogOpen} 
+        onOpenChange={setCreateDialogOpen}
+        onPlanCreated={handlePlanCreated}
+      />
     </MainLayout>
   );
 }

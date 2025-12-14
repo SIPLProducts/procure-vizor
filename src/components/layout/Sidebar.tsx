@@ -25,7 +25,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import dicabsLogo from "@/assets/dicabs-logo.png";
+import sharviLogo from "@/assets/sharvi-logo.png";
 import { useBannerTheme, colorSchemes, ColorSchemeKey } from "@/contexts/BannerThemeContext";
 
 const navItems = [
@@ -72,8 +72,8 @@ export function Sidebar({ collapsed }: SidebarProps) {
           collapsed ? "p-3" : "px-5 py-4"
         )}>
           <img 
-            src={dicabsLogo} 
-            alt="DICABS Logo" 
+            src={sharviLogo} 
+            alt="Sharvi Infotech Logo" 
             className={cn(
               "object-contain transition-all duration-300",
               collapsed ? "h-9 w-9" : "h-12"
