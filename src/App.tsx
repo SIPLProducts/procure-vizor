@@ -17,6 +17,7 @@ import Inventory from "./pages/Inventory";
 import ShipmentTracking from "./pages/ShipmentTracking";
 import VendorFinance from "./pages/VendorFinance";
 import PurchaseForecasting from "./pages/PurchaseForecasting";
+import PurchasePlan from "./pages/PurchasePlan";
 import GateEntry from "./pages/GateEntry";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -60,6 +61,7 @@ function AppRoutes() {
       <Route path="/shipments" element={<ProtectedRoute><ShipmentTracking /></ProtectedRoute>} />
       <Route path="/vendor-finance" element={<ProtectedRoute><VendorFinance /></ProtectedRoute>} />
       <Route path="/forecasting" element={<ProtectedRoute><PurchaseForecasting /></ProtectedRoute>} />
+      <Route path="/purchase-plan" element={<ProtectedRoute><PurchasePlan /></ProtectedRoute>} />
       <Route path="/gate-entry" element={<ProtectedRoute><GateEntry /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
