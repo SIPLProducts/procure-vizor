@@ -38,6 +38,7 @@ const navItems = [
   { name: "Inventory", path: "/inventory", icon: Package },
   { name: "Forecasting", path: "/forecasting", icon: TrendingUp },
   { name: "Purchase Plan", path: "/purchase-plan", icon: Calendar },
+  { name: "Budget Plan", path: "/budget-plan", icon: Wallet },
   { name: "Shipment Tracking", path: "/shipments", icon: Truck },
   { name: "Gate Entry", path: "/gate-entry", icon: DoorOpen },
   { name: "Vendor Finance", path: "/vendor-finance", icon: Wallet },
