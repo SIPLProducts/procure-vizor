@@ -12,6 +12,7 @@ import VendorOnboarding from "./pages/VendorOnboarding";
 import VendorApprovals from "./pages/VendorApprovals";
 import VendorProfile from "./pages/VendorProfile";
 import RFQManagement from "./pages/RFQManagement";
+import Quotations from "./pages/Quotations";
 import PurchaseOrders from "./pages/PurchaseOrders";
 import Inventory from "./pages/Inventory";
 import ShipmentTracking from "./pages/ShipmentTracking";
@@ -19,6 +20,7 @@ import VendorFinance from "./pages/VendorFinance";
 import PurchaseForecasting from "./pages/PurchaseForecasting";
 import PurchasePlan from "./pages/PurchasePlan";
 import GateEntry from "./pages/GateEntry";
+import VendorPortal from "./pages/VendorPortal";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -56,6 +58,7 @@ function AppRoutes() {
       <Route path="/vendors/approvals" element={<ProtectedRoute><VendorApprovals /></ProtectedRoute>} />
       <Route path="/vendors/:id" element={<ProtectedRoute><VendorProfile /></ProtectedRoute>} />
       <Route path="/rfq" element={<ProtectedRoute><RFQManagement /></ProtectedRoute>} />
+      <Route path="/quotations" element={<ProtectedRoute><Quotations /></ProtectedRoute>} />
       <Route path="/purchase-orders" element={<ProtectedRoute><PurchaseOrders /></ProtectedRoute>} />
       <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
       <Route path="/shipments" element={<ProtectedRoute><ShipmentTracking /></ProtectedRoute>} />
@@ -63,6 +66,7 @@ function AppRoutes() {
       <Route path="/forecasting" element={<ProtectedRoute><PurchaseForecasting /></ProtectedRoute>} />
       <Route path="/purchase-plan" element={<ProtectedRoute><PurchasePlan /></ProtectedRoute>} />
       <Route path="/gate-entry" element={<ProtectedRoute><GateEntry /></ProtectedRoute>} />
+      <Route path="/vendor-portal" element={<VendorPortal />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

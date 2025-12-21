@@ -12,6 +12,7 @@ import {
   DoorOpen,
   Wallet,
   Palette,
+  ClipboardList,
 } from "lucide-react";
 import {
   Tooltip,
@@ -32,6 +33,7 @@ const navItems = [
   { name: "Dashboard", path: "/", icon: LayoutDashboard },
   { name: "Vendors", path: "/vendors", icon: Users },
   { name: "RFQ Management", path: "/rfq", icon: FileText },
+  { name: "Quotations", path: "/quotations", icon: ClipboardList },
   { name: "Purchase Orders", path: "/purchase-orders", icon: ShoppingCart },
   { name: "Inventory", path: "/inventory", icon: Package },
   { name: "Forecasting", path: "/forecasting", icon: TrendingUp },
